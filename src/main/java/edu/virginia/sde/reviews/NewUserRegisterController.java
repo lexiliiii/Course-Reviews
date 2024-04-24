@@ -10,12 +10,12 @@ import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 
-public class LogInController {
+public class NewUserRegisterController {
 
-    public LogInController(Stage stage){
-        stage.setTitle( "Log In" );
+    public NewUserRegisterController( Stage stage ){
+        stage.setTitle( "New User Register" );
 
-        Label logInInstruction = new Label( "Welcome! Please log in into your account" );
+        Label logInInstruction = new Label( "Please create your username and password below." );
 
         // Ask for Username
         Label userNameRequest = new Label( "Username:" );
@@ -30,8 +30,7 @@ public class LogInController {
         input_password.setMaxWidth( 200 );
 
         // Buttons lead to next step
-        Button logInButton = new Button( "Log In" );
-        Button registerButton = new Button( "New User Register" );
+        Button logInButton = new Button( "Register" );
 
         // Lay out the Username line horizontally
         HBox userNameBox = new HBox( 10 );
@@ -45,7 +44,7 @@ public class LogInController {
 
         // Lay out the Buttons line horizontally
         HBox buttonBox = new HBox(10);  // 10 pixels spacing between buttons
-        buttonBox.getChildren().addAll( logInButton, registerButton );
+        buttonBox.getChildren().addAll( logInButton );
         buttonBox.setAlignment(Pos.CENTER);
 
         // Lay out everything in the scene vertically
@@ -59,30 +58,23 @@ public class LogInController {
         root.getChildren().add( buttonBox );
 
         Label errorLabel = new Label();
+
+//        logInButton.setOnAction(e -> {
+//            String username = input_userName.getText();
+//            String password = input_password.getText();
+//            if ( authenticate(username, password) ) {
+//
+//            } else {
+//                errorLabel.setText("Invalid username or password.");
+//            }
+//        });
+
         root.getChildren().add( errorLabel );
 
-        logInButton.setOnAction(e -> {
-            String username = input_userName.getText();
-            String password = input_password.getText();
-            if ( authenticate(username, password) ) {
-
-            } else {
-                errorLabel.setText("Invalid username or password.");
-            }
-        });
-
-        registerButton.setOnAction(e -> {
-            NewUserRegisterController register = new NewUserRegisterController( stage );
-        });
 
         // Create Scene
         Scene scene = new Scene( root,1280, 780 );
         stage.setScene(scene);
         stage.show();
-    }
-
-
-    private boolean authenticate( String username, String password ){
-        return false;
     }
 }
