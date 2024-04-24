@@ -30,7 +30,7 @@ public class NewUserRegisterController {
         input_password.setMaxWidth( 200 );
 
         // Buttons lead to next step
-        Button logInButton = new Button( "Register" );
+        Button registerButton = new Button( "Register" );
 
         // Lay out the Username line horizontally
         HBox userNameBox = new HBox( 10 );
@@ -44,7 +44,7 @@ public class NewUserRegisterController {
 
         // Lay out the Buttons line horizontally
         HBox buttonBox = new HBox(10);  // 10 pixels spacing between buttons
-        buttonBox.getChildren().addAll( logInButton );
+        buttonBox.getChildren().addAll( registerButton );
         buttonBox.setAlignment(Pos.CENTER);
 
         // Lay out everything in the scene vertically
@@ -58,23 +58,33 @@ public class NewUserRegisterController {
         root.getChildren().add( buttonBox );
 
         Label errorLabel = new Label();
-
-//        logInButton.setOnAction(e -> {
-//            String username = input_userName.getText();
-//            String password = input_password.getText();
-//            if ( authenticate(username, password) ) {
-//
-//            } else {
-//                errorLabel.setText("Invalid username or password.");
-//            }
-//        });
-
         root.getChildren().add( errorLabel );
+
+        registerButton.setOnAction(e -> {
+            String username = input_userName.getText();
+            String password = input_password.getText();
+            if ( authenticate(username, password) ) {
+                errorLabel.setText("");
+                LogInController login = new LogInController( stage );
+
+            } else {
+                errorLabel.setText("Invalid username or password.");
+            }
+        });
 
 
         // Create Scene
         Scene scene = new Scene( root,1280, 780 );
         stage.setScene(scene);
         stage.show();
+    }
+
+    private boolean authenticate( String username, String password ){
+        if( password.length() < 8 ){
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 }
