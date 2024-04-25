@@ -31,7 +31,19 @@ public class LogInController {
 
         // Buttons lead to next step
         Button logInButton = new Button( "Log In" );
+        logInButton.setPrefSize( 75, 20 );
         Button registerButton = new Button( "New User Register" );
+//        registerButton.setPrefSize( 100, 20 );
+
+        // Close buttons
+        Button closeButton = new Button("Exit");
+//        closeButton.setPrefSize(100, 20);
+        closeButton.setOnAction(event -> stage.close());
+
+//        // Lay out the Close button
+//        HBox close = new HBox(10 );
+//        close.getChildren().add( closeButton );
+//        close.setAlignment( Pos.BOTTOM_RIGHT );
 
         // Lay out the Username line horizontally
         HBox userNameBox = new HBox( 10 );
@@ -44,8 +56,8 @@ public class LogInController {
         passwordBox.setAlignment( Pos.CENTER );
 
         // Lay out the Buttons line horizontally
-        HBox buttonBox = new HBox(10);  // 10 pixels spacing between buttons
-        buttonBox.getChildren().addAll( logInButton, registerButton );
+        HBox buttonBox = new HBox(10);
+        buttonBox.getChildren().addAll( logInButton, registerButton, closeButton );
         buttonBox.setAlignment(Pos.CENTER);
 
         // Lay out everything in the scene vertically
@@ -57,6 +69,7 @@ public class LogInController {
         root.getChildren().add( userNameBox );
         root.getChildren().add( passwordBox );
         root.getChildren().add( buttonBox );
+//        root.getChildren().add( close );
 
         Label errorLabel = new Label();
         root.getChildren().add( errorLabel );
@@ -65,7 +78,8 @@ public class LogInController {
             String username = input_userName.getText();
             String password = input_password.getText();
             if ( authenticate(username, password) ) {
-
+                errorLabel.setText("");
+                LogInController login = new LogInController( stage );
             } else {
                 errorLabel.setText("Invalid username or password.");
             }

@@ -32,6 +32,9 @@ public class NewUserRegisterController {
         // Buttons lead to next step
         Button registerButton = new Button( "Register" );
 
+        Button closeButton = new Button("Exit");
+        closeButton.setOnAction(event -> stage.close());
+
         // Lay out the Username line horizontally
         HBox userNameBox = new HBox( 10 );
         userNameBox.getChildren().addAll( userNameRequest, input_userName );
@@ -44,7 +47,7 @@ public class NewUserRegisterController {
 
         // Lay out the Buttons line horizontally
         HBox buttonBox = new HBox(10);  // 10 pixels spacing between buttons
-        buttonBox.getChildren().addAll( registerButton );
+        buttonBox.getChildren().addAll( registerButton, closeButton );
         buttonBox.setAlignment(Pos.CENTER);
 
         // Lay out everything in the scene vertically
