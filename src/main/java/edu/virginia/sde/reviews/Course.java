@@ -1,5 +1,9 @@
 package edu.virginia.sde.reviews;
 
+import java.text.DecimalFormat;
+
+import static java.lang.Math.round;
+
 public class Course {
     /**
      * Course subject mnemonic: String with at most 4 characters.
@@ -49,4 +53,16 @@ public class Course {
         return avgRating;
     }
 
+    public void setAvgRating(double avgRating) {
+        this.avgRating = avgRating;
+    }
+
+    @Override
+    public String toString() {
+        String formattedRate = String.format("%.2f", avgRating );
+        String c = mnemonic + courseNumber +
+                "\n" + courseTitle +
+                "\n" + "\n" + "Average Rating:  " + formattedRate;
+        return c;
+    }
 }
