@@ -79,8 +79,12 @@ public class LogInController {
             String password = input_password.getText();
             if ( authenticate(username, password) ) {
                 errorLabel.setText("");
-                LogInController login = new LogInController( stage );
+                input_userName.clear();
+                input_password.clear();
+                CourseSearchController courseSearch = new CourseSearchController( stage );
             } else {
+                input_userName.clear();
+                input_password.clear();
                 errorLabel.setText("Invalid username or password.");
             }
         });
@@ -97,6 +101,6 @@ public class LogInController {
 
 
     private boolean authenticate( String username, String password ){
-        return false;
+        return true;
     }
 }
