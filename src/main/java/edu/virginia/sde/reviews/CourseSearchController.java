@@ -43,7 +43,7 @@ public class CourseSearchController {
 
         // TODO: Set Action for clicking each row.
         list.setOnMouseClicked(event -> {
-//            LogInController login = new LogInController( stage );
+//            CourseReview review = new CourseReview( stage, username );
         });
 
         // TODO: Action for Searching
@@ -130,6 +130,7 @@ public class CourseSearchController {
 
         List<Course> allCourses = driver.getAllCourses();
         ObservableList<Course> items = FXCollections.observableArrayList( allCourses );
+        driver.disconnect();
         return items;
     }
 

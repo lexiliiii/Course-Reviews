@@ -10,6 +10,9 @@ import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 
+import java.sql.SQLException;
+import java.util.List;
+
 public class NewUserRegisterController {
 
     public NewUserRegisterController( Stage stage ){
@@ -66,12 +69,20 @@ public class NewUserRegisterController {
         registerButton.setOnAction(e -> {
             String username = input_userName.getText();
             String password = input_password.getText();
-            if ( authenticate(username, password) ) {
-                errorLabel.setText("");
-                LogInController login = new LogInController( stage );
-
-            } else {
-                errorLabel.setText("Invalid username or password.");
+            try {
+                if ( userNameAuthenticate( username, password) ) {
+                    errorLabel.setText("");
+                    registerUser( username, password );
+                    input_userName.clear();
+                    input_password.clear();
+                    LogInController login = new LogInController( stage );
+                } else {
+                    input_userName.clear();
+                    input_password.clear();
+                    errorLabel.setText("Invalid username or password.");
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
             }
         });
 
@@ -82,12 +93,31 @@ public class NewUserRegisterController {
         stage.show();
     }
 
-    private boolean authenticate( String username, String password ){
+    private boolean userNameAuthenticate( String username, String password ) throws SQLException {
         if( password.length() < 8 ){
             return false;
         }
-        else {
-            return true;
+
+        DatabaseReviews driver = new DatabaseReviews("reviews.sqlite" );
+        driver.connect();
+        driver.createTables();
+
+        List<User> allUsers = driver.getAllUsers();
+        for( int i = 0; i < allUsers.size(); i++ ){
+            User user = allUsers.get(i);
+            if( username.equals( user.getUsername() )){
+                return false;
+            }
         }
+        driver.disconnect();
+        return true;
+    }
+
+    private void registerUser( String username, String password ) throws SQLException {
+        DatabaseReviews driver = new DatabaseReviews("reviews.sqlite" );
+        driver.connect();
+        driver.createTables();
+        driver.registerUser( username, password );
+        driver.disconnect();
     }
 }
