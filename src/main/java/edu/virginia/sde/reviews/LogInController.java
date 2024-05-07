@@ -85,7 +85,7 @@ public class LogInController {
                     errorLabel.setText("");
                     input_userName.clear();
                     input_password.clear();
-                    CourseSearchController courseSearch = new CourseSearchController( stage );
+                    CourseSearchController courseSearch = new CourseSearchController( stage, username );
                 } else {
                     input_userName.clear();
                     input_password.clear();

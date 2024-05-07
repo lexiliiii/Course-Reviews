@@ -22,7 +22,7 @@ import java.util.List;
 
 public class CourseSearchController {
 
-    public CourseSearchController(Stage stage) throws SQLException {
+    public CourseSearchController( Stage stage, String username ) throws SQLException {
 
         stage.setTitle( "Course Search" );
 
@@ -36,7 +36,6 @@ public class CourseSearchController {
         TextField titleInput = new TextField();
         Label errorLabel = new Label();
 
-        // TODO: Sort out courses base on the search
         ListView<Course> list = new ListView<Course>();
         ObservableList<Course> items = viewableCourse();
         list.setItems( items );
@@ -54,10 +53,11 @@ public class CourseSearchController {
             String num = numberInput.getText();
             String title = titleInput.getText();
 
+
             if( mnem.length() > 4 ){
                 errorLabel.setText( "Please Check Your Fields!" );
             }
-            else if ( num != null && num.length() != 4 ) {
+            else if ( !num.equals( "" ) && num.length() != 4 ) {
                 errorLabel.setText( "Please Check Your Fields!" );
             }
             else {
@@ -70,7 +70,7 @@ public class CourseSearchController {
                 }
 
                 if( selectedItems.isEmpty() ){
-                    errorLabel.setText( "No Courses Founded." );
+                    errorLabel.setText( "No Course Found." );
                 }
                 list.setItems( selectedItems );
                 list.setPrefWidth( 800 );
@@ -84,14 +84,6 @@ public class CourseSearchController {
         VBox searchBox = new VBox( 10 );
         searchBox.getChildren().addAll( searchLabel, inputBox, errorLabel );
         searchBox.setAlignment( Pos.CENTER );
-
-
-        // Testing Course SetUP:
-//        Course course1 = new Course( "CS", 3140, "Software Development Essentials", 0.0);
-//        course1.setAvgRating( 2.356 );
-//        Course course2 = new Course( "CS", 2130, "Computer Systems and Organization", 0.0);
-//        course2.setAvgRating( 2.07 );
-
 
 
         Button addButton = new Button( "Add Courses" );
@@ -142,27 +134,42 @@ public class CourseSearchController {
     }
 
     private ObservableList<Course> viewableCourse( String mnem, String number, String title ) throws SQLException {
+        if( mnem.equals( "" ) && number.equals( "" ) && title.equals( "" ) ){
+            return viewableCourse();
+        }
+
         DatabaseReviews driver = new DatabaseReviews("reviews.sqlite" );
         driver.connect();
         driver.createTables();
 
         List<Course> allCourses = driver.getAllCourses();
         List<Course> selectedCourses = new ArrayList<Course>();
+        mnem = mnem.toUpperCase();
+        title = title.toLowerCase();
+
 
         for( int i = 0; i < allCourses.size(); i++ ){
-            boolean fit = false;
+            boolean fit = true;
+
             Course course = allCourses.get( i );
-            if( course.getMnemonic().equals( mnem ) ){
-                fit = true;
+
+            if( !mnem.equals( "" ) ){
+                if( !course.getMnemonic().equals( mnem ) ){
+                    fit = false;
+                }
             }
-            if( course.getCourseNumber() == Integer.parseInt( number ) ){
-                fit = true;
+            if( !number.equals( "" ) ){
+                if( course.getCourseNumber() != Integer.parseInt( number ) ){
+                    fit = false;
+                }
             }
-            if( course.getCourseTitle().contains( title )){
-                fit = true;
+            if( !title.equals( "" ) ){
+                if( !course.getCourseTitle().toLowerCase().contains( title ) ){
+                    fit = false;
+                }
             }
 
-            if( fit ){
+            if( fit == true ){
                 selectedCourses.add( course );
             }
         }
