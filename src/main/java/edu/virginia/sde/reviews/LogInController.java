@@ -10,6 +10,9 @@ import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 
+import java.sql.SQLException;
+import java.util.List;
+
 public class LogInController {
 
     public LogInController(Stage stage){
@@ -100,7 +103,24 @@ public class LogInController {
     }
 
 
-    private boolean authenticate( String username, String password ){
-        return true;
+    private boolean authenticate( String username, String password ) throws SQLException {
+        DatabaseReviews driver = new DatabaseReviews("reviews.sqlite" );
+        driver.connect();
+        driver.createTables();
+
+        boolean result = false;
+
+        List<User> allUsers = driver.getAllUsers();
+        for( int i = 0; i < allUsers.size(); i++ ){
+            User user = allUsers.get(i);
+            if( username.equals( user.getUsername() )){
+                if( password.equals( user.getPassword() )){
+                    result = true;
+                }
+            }
+        }
+
+        return result;
+
     }
 }
