@@ -80,15 +80,19 @@ public class LogInController {
         logInButton.setOnAction(e -> {
             String username = input_userName.getText();
             String password = input_password.getText();
-            if ( authenticate(username, password) ) {
-                errorLabel.setText("");
-                input_userName.clear();
-                input_password.clear();
-                CourseSearchController courseSearch = new CourseSearchController( stage );
-            } else {
-                input_userName.clear();
-                input_password.clear();
-                errorLabel.setText("Invalid username or password.");
+            try {
+                if ( authenticate(username, password) ) {
+                    errorLabel.setText("");
+                    input_userName.clear();
+                    input_password.clear();
+                    CourseSearchController courseSearch = new CourseSearchController( stage );
+                } else {
+                    input_userName.clear();
+                    input_password.clear();
+                    errorLabel.setText("Invalid username or password.");
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
             }
         });
 
@@ -119,6 +123,7 @@ public class LogInController {
                 }
             }
         }
+        driver.disconnect();
 
         return result;
 

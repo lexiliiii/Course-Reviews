@@ -60,8 +60,12 @@ public class Course {
     @Override
     public String toString() {
         String formattedRate = String.format("%.2f", avgRating );
-        String c = mnemonic+ courseNumber +
-                " " + courseTitle + " " + "avgRating: " + formattedRate;
+//        String c = mnemonic+ courseNumber +
+//                " " + courseTitle + " " + "avgRating: " + formattedRate;
+        String c = mnemonic + courseNumber +
+                "\n" + courseTitle +
+                "\n" + "\n" + "Average Rating:  " + formattedRate;
         return c;
+
     }
 }
