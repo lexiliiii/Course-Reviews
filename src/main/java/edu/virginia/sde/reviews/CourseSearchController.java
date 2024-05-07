@@ -47,9 +47,9 @@ public class CourseSearchController {
 
 
         // Testing Course SetUP:
-        Course course1 = new Course( "CS", 3140, "Software Development Essentials" );
+        Course course1 = new Course( "CS", 3140, "Software Development Essentials", 0.0);
         course1.setAvgRating( 2.356 );
-        Course course2 = new Course( "CS", 2130, "Computer Systems and Organization" );
+        Course course2 = new Course( "CS", 2130, "Computer Systems and Organization", 0.0);
         course2.setAvgRating( 2.07 );
 
 

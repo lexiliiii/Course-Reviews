@@ -27,7 +27,7 @@ public class Course {
     private double avgRating;
 
 
-    public Course( String mnemonic, int courseNumber, String courseTitle ) {
+    public Course( String mnemonic, int courseNumber, String courseTitle , double avgRating) {
         if ( mnemonic == null || String.valueOf( courseNumber ).length() != 4 || courseTitle == null ) {
             throw new IllegalArgumentException("Invalid Course arguments.");
         }
@@ -37,19 +37,19 @@ public class Course {
         this.avgRating = 0.00;
     }
 
-    public String getMnemonic(){
+    public String getMnemonic() {
         return mnemonic;
     }
 
-    public int getCourseNumber(){
-        return courseNumber;
-    }
-
-    public String getCourseTitle(){
+    public String getCourseTitle() {
         return courseTitle;
     }
 
-    public double getAvgRating(){
+    public int getCourseNumber() {
+        return courseNumber;
+    }
+
+    public double getAvgRating() {
         return avgRating;
     }
 
@@ -60,9 +60,8 @@ public class Course {
     @Override
     public String toString() {
         String formattedRate = String.format("%.2f", avgRating );
-        String c = mnemonic + courseNumber +
-                "\n" + courseTitle +
-                "\n" + "\n" + "Average Rating:  " + formattedRate;
+        String c = mnemonic+ courseNumber +
+                " " + courseTitle + " " + "avgRating: " + formattedRate;
         return c;
     }
 }
