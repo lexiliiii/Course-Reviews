@@ -10,6 +10,9 @@ import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 
+import java.sql.SQLException;
+import java.util.List;
+
 public class LogInController {
 
     public LogInController(Stage stage){
@@ -77,15 +80,19 @@ public class LogInController {
         logInButton.setOnAction(e -> {
             String username = input_userName.getText();
             String password = input_password.getText();
-            if ( authenticate(username, password) ) {
-                errorLabel.setText("");
-                input_userName.clear();
-                input_password.clear();
-                CourseSearchController courseSearch = new CourseSearchController( stage );
-            } else {
-                input_userName.clear();
-                input_password.clear();
-                errorLabel.setText("Invalid username or password.");
+            try {
+                if ( authenticate(username, password) ) {
+                    errorLabel.setText("");
+                    input_userName.clear();
+                    input_password.clear();
+                    CourseSearchController courseSearch = new CourseSearchController( stage, username );
+                } else {
+                    input_userName.clear();
+                    input_password.clear();
+                    errorLabel.setText("Invalid username or password.");
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
             }
         });
 
@@ -100,7 +107,25 @@ public class LogInController {
     }
 
 
-    private boolean authenticate( String username, String password ){
-        return true;
+    private boolean authenticate( String username, String password ) throws SQLException {
+        DatabaseReviews driver = new DatabaseReviews("reviews.sqlite" );
+        driver.connect();
+        driver.createTables();
+
+        boolean result = false;
+
+        List<User> allUsers = driver.getAllUsers();
+        for( int i = 0; i < allUsers.size(); i++ ){
+            User user = allUsers.get(i);
+            if( username.equals( user.getUsername() )){
+                if( password.equals( user.getPassword() )){
+                    result = true;
+                }
+            }
+        }
+        driver.disconnect();
+
+        return result;
+
     }
 }
