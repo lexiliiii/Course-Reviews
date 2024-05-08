@@ -62,12 +62,15 @@ public class DatabaseReviews {
         String Reviews =
                 "CREATE TABLE IF NOT EXISTS Reviews (" +
                         "ReviewID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                        "Username TEXT NOT NULL, " +
                         "CourseMnemonic TEXT NOT NULL, " +
                         "CourseNumber INTEGER NOT NULL, " +
                         "Rating INTEGER NOT NULL CHECK (Rating BETWEEN 1 AND 5), " +
                         "Timestamp TIMESTAMP NOT NULL, " +
                         "Comment TEXT, " +
+                        "FOREIGN KEY (Username) REFERENCES Users(Username) ON DELETE CASCADE, " +
                         "FOREIGN KEY (CourseMnemonic, CourseNumber) REFERENCES Courses(CourseMnemonic, CourseNumber) ON DELETE CASCADE);";
+
 
         String MyReviews =
                 "CREATE TABLE IF NOT EXISTS MyReviews (" +
@@ -94,6 +97,7 @@ public class DatabaseReviews {
      * @param password
      * @throws SQLException
      */
+    //TODO: need to throw exception if 2 usernames are the same
     public void registerUser(String username, String password) throws SQLException {
         String sql = "INSERT INTO Users (Username, Password) VALUES (?, ?)";
 
@@ -142,7 +146,6 @@ public class DatabaseReviews {
             pstmt.setString(3, title);
             pstmt.setDouble(4, avgPoint);
             pstmt.executeUpdate();
-            commit();
 
         } catch (SQLException e) {
             rollback();
@@ -189,7 +192,6 @@ public class DatabaseReviews {
             pstmt.setInt(3, courseNumber);
             pstmt.setInt(4, rating);
             pstmt.executeUpdate();
-            commit();
 //            if (affectedRows > 0) {
 //                System.out.println("Review added successfully.");
 //            } else {
@@ -245,7 +247,6 @@ public class DatabaseReviews {
             pstmt.setString(5, comment);
 
             pstmt.executeUpdate();
-            commit();
 //            if (affectedRows > 0) {
 //                System.out.println("Review added successfully for course: " + courseMnemonic);
 //            } else {
@@ -274,6 +275,7 @@ public class DatabaseReviews {
             while (rs.next()) {
                 Review review = new Review(
                         rs.getInt("ReviewID"),
+                        rs.getString("Username"),
                         rs.getString("CourseMnemonic"),
                         rs.getInt("CourseNumber"),
                         rs.getInt("Rating"),
@@ -312,6 +314,18 @@ public class DatabaseReviews {
         }
     }
 
+    public double getAvgScore(String courseMnemonic, int courseNumber) throws SQLException {
+        if (connection.isClosed()) {
+            throw new IllegalStateException("Connection is closed right now.");
+        }
+        List<Review> allReviews = getReviewsForCourse(courseMnemonic, courseNumber);
+        double total = 0.0;
+        for(int i = 0; i < allReviews.size(); i ++){
+            total += allReviews.get(i).getRating();
+        }
+        return total/allReviews.size();
+    }
+
     public void clearTables() throws SQLException {
         if (connection.isClosed()) {
             throw new IllegalStateException("Connection is closed right now.");
@@ -334,44 +348,44 @@ public class DatabaseReviews {
         }
     }
 
-//    public static void main(String[] args){
-//        try {
-//            DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
+    public static void main(String[] args){
+        try {
+            DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
+
+            driver.connect();
+
+            driver.createTables();
+
+//            List<User> allUser = driver.getAllUsers();
+//            for( int i = 0; i < allUser.size(); i++ ){
+//                System.out.println( allUser.get( i ) );
+//            }
+
+//            driver.registerUser("test4","12");
+//            driver.registerUser("test5","1111111!!!");
+
+//            driver.addCourse("SDE", 3140, "Software Development Essentials", 0.00);
+//            driver.addMyReview("test1", "SDE", 3140, 1);
+//            driver.addReview("SDE", 3140, 1, new Timestamp(System.currentTimeMillis()), "shit");
 //
-//            driver.connect();
-//
-//            driver.createTables();
-//
-////            List<User> allUser = driver.getAllUsers();
-////            for( int i = 0; i < allUser.size(); i++ ){
-////                System.out.println( allUser.get( i ) );
-////            }
-//
-////            driver.registerUser("test4","12");
-////            driver.registerUser("test5","1111111!!!");
-//
-////            driver.addCourse("SDE", 3140, "Software Development Essentials", 0.00);
-////            driver.addMyReview("test1", "SDE", 3140, 1);
-////            driver.addReview("SDE", 3140, 1, new Timestamp(System.currentTimeMillis()), "shit");
-////
-////            driver.commit();
-//
-////            List<User> temp = driver.getAllUsers();
-////            System.out.println(temp);
-//
-////            List<Course> temp = driver.getAllCourses();
-////            System.out.println(temp);
-//
-////            List<MyReview> temp = driver.getMyReviews("test1");
-////            System.out.println(temp);
-//
-////            List<Review> temp1 = driver.getReviewsForCourse("SDE", 3140);
-////            System.out.println(temp1);
-//
-//            driver.disconnect();
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+//            driver.commit();
+
+//            List<User> temp = driver.getAllUsers();
+//            System.out.println(temp);
+
+//            List<Course> temp = driver.getAllCourses();
+//            System.out.println(temp);
+
+//            List<MyReview> temp = driver.getMyReviews("test1");
+//            System.out.println(temp);
+
+//            List<Review> temp1 = driver.getReviewsForCourse("SDE", 3140);
+//            System.out.println(temp1);
+
+            driver.disconnect();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

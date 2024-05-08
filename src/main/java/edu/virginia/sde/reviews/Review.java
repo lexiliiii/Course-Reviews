@@ -4,14 +4,16 @@ import java.sql.Timestamp;
 
 public class Review {
     private int reviewID;
+    private String username;
     private String courseMnemonic;
     private int courseNumber;
     private int rating;
     private Timestamp timestamp;
     private String comment;
 
-    public Review(int reviewID, String courseMnemonic, int courseNumber, int rating, Timestamp timestamp, String comment) {
+    public Review(int reviewID, String username, String courseMnemonic, int courseNumber, int rating, Timestamp timestamp, String comment) {
         this.reviewID = reviewID;
+        this.username = username;
         this.courseMnemonic = courseMnemonic;
         this.courseNumber = courseNumber;
         this.rating = rating;
@@ -19,9 +21,12 @@ public class Review {
         this.comment = comment;
     }
 
-    // Getters and possibly setters as needed
     public int getReviewID() {
         return reviewID;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public String getCourseMnemonic() {
@@ -48,6 +53,7 @@ public class Review {
     public String toString() {
         return "Review{" +
                 "reviewID=" + reviewID +
+                "username=" + username +
                 ", courseMnemonic='" + courseMnemonic + '\'' +
                 ", courseNumber=" + courseNumber +
                 ", rating=" + rating +
