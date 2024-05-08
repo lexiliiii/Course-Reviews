@@ -49,10 +49,13 @@ public class AddReviewController {
                     errorLabel.setText("Invalid Rating");
                }
                int rating=Integer.parseInt(rateString);
-               database.addReview(Mnemonic, CourseNum, rating, new Timestamp(System.currentTimeMillis()), words);
+               database.addReview(Username,Mnemonic,CourseNum,rating,new Timestamp(System.currentTimeMillis()),words);
                database.addMyReview(Username,Mnemonic,CourseNum,rating);
                database.commit();
                database.disconnect();
+               inputComment.clear();
+               inputRate.clear();
+               CourseReviewController courseReview=new CourseReviewController(stage,Username,Mnemonic,CourseNum);
            } catch (SQLException e) {
                throw new RuntimeException(e);
            }
