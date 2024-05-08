@@ -46,8 +46,7 @@ public class CourseSearchController {
             Course selectedCourse = list.getSelectionModel().getSelectedItem();
             String selectedMnemonic = selectedCourse.getMnemonic();
             int selectedCourseNumber = selectedCourse.getCourseNumber();
-            String selectedTitle = selectedCourse.getCourseTitle();
-//            ReviewController review = new ReviewController( stage, selectedMnemonic, selectedCourseNumber, selectedTitle, username)
+           CourseReviewController review = new CourseReviewController( stage, username,selectedMnemonic,selectedCourseNumber);
         });
 
 
@@ -98,6 +97,11 @@ public class CourseSearchController {
         // TODO: Connect to My Reviews Scene.
         Button myReviewButton = new Button( "My Review" );
         myReviewButton.setOnAction(event -> {
+            try {
+                MyReviewController review=new MyReviewController(stage,username);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
 //            stage.close();
         });
 
