@@ -47,11 +47,9 @@ public class MyReview {
 
         @Override
     public String toString() {
-        return "MyReview{" +
-                "username='" + username + '\'' +
-                ", courseMnemonic='" + courseMnemonic + '\'' +
-                ", courseNumber=" + courseNumber +
-                ", rating=" + rating +
-                '}';
+        return courseMnemonic + '\'' +
+               + courseNumber +"\n" + "\n"+
+                "Rating: "+ rating
+               ;
     }
 }

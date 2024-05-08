@@ -19,116 +19,56 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyReviewController {
-    public MyReviewController(Stage stage, String username){
+    public MyReviewController(Stage stage, String username) throws SQLException {
         stage.setTitle("My Review");
-        Label myreview = new Label( "My Review" );
+        Label myreview = new Label(username+"'s review");
 
+        ListView<MyReview> list = new ListView<MyReview>();
+        ObservableList<MyReview> items = viewableMyReview(username);
+        list.setItems(items);
+        list.setPrefWidth(800);
+        list.setPrefHeight(300); // Set a preferred height to ensure scrollability
 
-
-
-//
-//
-        // Testing Review:
-        MyReview review1 = new MyReview("iris","CS",3140,1);
-        MyReview review2 = new MyReview("lexie","CS",3140,1);
-//
-//
-////        // TODO: Sort out courses base on the search
-//        ListView<Course> list = new ListView<Course>();
-//        ObservableList<Course> items = null;
-//        try {
-//            items = viewableMyReviews(username);
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//        list.setItems( items );
-//        list.setPrefWidth( 800 );
-
-//
-//        // TODO: Set Action for clicking each row.
-//        list.setOnMouseClicked(event -> {
-//            CourseReviewController courseReview=new CourseReviewController(stage, username);
-//        });
-
-        Button logOutButton = new Button( "Log Out" );
-        logOutButton.setOnAction(event -> {
-            LogInController login = new LogInController( stage );
+        list.setOnMouseClicked(event -> {
+            if (!list.getSelectionModel().isEmpty()) {
+                MyReview selectedReview = list.getSelectionModel().getSelectedItem();
+                String mnemonic=selectedReview.getCourseMnemonic();
+                int coursenum=selectedReview.getCourseNumber();
+                CourseReviewController courseReview = new CourseReviewController(stage, username, selectedReview.getCourseMnemonic(), selectedReview.getCourseNumber());
+            }
         });
 
-        HBox functionBox = new HBox( 10 );
-        functionBox.getChildren().addAll(  logOutButton );
-        functionBox.setAlignment( Pos.CENTER );
-
+        Button back = new Button("Back");
+        back.setOnAction(event -> {
+            try {
+                CourseSearchController search = new CourseSearchController(stage, username);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         GridPane root = new GridPane();
-//        root.setHgap(10);
-//        root.setVgap(10);
-//        root.setPadding(new Insets(0, 10, 0, 10));
-//        root.setAlignment( Pos.CENTER );
-//        root.add( searchBox, 0, 0 );
-//        root.add( list, 0, 1 );
-//        root.add( functionBox, 0, 2 );
+        root.setHgap(10);
+        root.setVgap(10);
+        root.setPadding(new Insets(0, 10, 0, 10));
+        root.setAlignment(Pos.CENTER);
+        root.add(myreview, 0, 0);
+        root.add(list, 0, 1);
+        root.add(back, 0, 2);
 
-
-
-        Scene scene = new Scene( root,1280, 780 );
+        Scene scene = new Scene(root, 1280, 780);
         stage.setScene(scene);
         stage.show();
     }
-//    private ObservableList<Course> viewableMyReviews(String username) throws SQLException {
-//        DatabaseReviews driver = new DatabaseReviews("reviews.sqlite" );
-//        driver.connect();
-//        driver.createTables();
-//
-//        List<MyReview> allMyReviews = driver.getMyReviews(username);
-//        ObservableList<MyReview> items = FXCollections.observableArrayList( allMyReviews );
-//        return items;
-//    }
 
-//    private ObservableList<Course> viewableReview( String mnem, String number, Integer rating) throws SQLException {
-//        if( mnem.equals( "" ) && number.equals( "" ) && rating==null ){
-//            return viewableMyReviews(username);
-//        }
-//
-//        DatabaseReviews driver = new DatabaseReviews("reviews.sqlite" );
-//        driver.connect();
-//        driver.createTables();
-//
-//        List<Course> allCourses = driver.getAllCourses();
-//        List<Course> selectedCourses = new ArrayList<Course>();
-//        mnem = mnem.toUpperCase();
-//       // title = title.toLowerCase();
-//
-//
-//        for( int i = 0; i < allCourses.size(); i++ ){
-//            boolean fit = true;
-//
-//            Course course = allCourses.get( i );
-//
-//            if( !mnem.equals( "" ) ){
-//                if( !course.getMnemonic().equals( mnem ) ){
-//                    fit = false;
-//                }
-//            }
-//            if( !number.equals( "" ) ){
-//                if( course.getCourseNumber() != Integer.parseInt( number ) ){
-//                    fit = false;
-//                }
-//            }
-//            if( !(rating==null) ){
-             //   if( !course.getCourseTitle().toLowerCase().contains( title ) ){
-//                    fit = false;
-//                }
-//            }
+    private ObservableList<MyReview> viewableMyReview(String username) throws SQLException {
+        DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
+        driver.connect();
+        driver.createTables();
+        List<MyReview> allMyReviews = driver.getMyReviews(username);
+        return FXCollections.observableArrayList(allMyReviews);
+    }
 
-//            if( fit == true ){
-//                selectedCourses.add( course );
-//            }
-//        }
-//
-//        ObservableList<Course> items = FXCollections.observableArrayList( selectedCourses );
-//        driver.disconnect();
-//        return items;
-//    }
 
 }
+
