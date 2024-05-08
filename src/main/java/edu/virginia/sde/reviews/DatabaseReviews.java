@@ -232,19 +232,20 @@ public class DatabaseReviews {
         return reviews;
     }
 
-    public void addReview(String courseMnemonic, int courseNumber, int rating, Timestamp timestamp, String comment) throws SQLException {
+    public void addReview(String username,String courseMnemonic, int courseNumber, int rating, Timestamp timestamp, String comment) throws SQLException {
         if (connection.isClosed()) {
             throw new IllegalStateException("Connection is closed right now.");
         }
 
-        String sql = "INSERT INTO Reviews (CourseMnemonic, CourseNumber, Rating, Timestamp, Comment) VALUES (?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO Reviews (Username, CourseMnemonic, CourseNumber, Rating, Timestamp, Comment) VALUES (?, ?, ?, ?, ?);";
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, courseMnemonic);
-            pstmt.setInt(2, courseNumber);
-            pstmt.setInt(3, rating);
-            pstmt.setTimestamp(4, timestamp);
-            pstmt.setString(5, comment);
+            pstmt.setString(1, username);
+            pstmt.setString(2, courseMnemonic);
+            pstmt.setInt(3, courseNumber);
+            pstmt.setInt(4, rating);
+            pstmt.setTimestamp(5, timestamp);
+            pstmt.setString(6, comment);
 
             pstmt.executeUpdate();
 //            if (affectedRows > 0) {
