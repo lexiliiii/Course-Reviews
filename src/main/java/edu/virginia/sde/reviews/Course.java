@@ -62,7 +62,7 @@ public class Course {
         String formattedRate = String.format("%.2f", avgRating );
 //        String c = mnemonic+ courseNumber +
 //                " " + courseTitle + " " + "avgRating: " + formattedRate;
-        String c = mnemonic + courseNumber +
+        String c = mnemonic.toUpperCase() + courseNumber +
                 "\n" + courseTitle +
                 "\n" + "\n" + "Average Rating:  " + formattedRate;
         return c;

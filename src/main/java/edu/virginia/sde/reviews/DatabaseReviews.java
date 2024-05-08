@@ -142,6 +142,7 @@ public class DatabaseReviews {
             pstmt.setString(3, title);
             pstmt.setDouble(4, avgPoint);
             pstmt.executeUpdate();
+            commit();
 
         } catch (SQLException e) {
             rollback();
@@ -188,6 +189,7 @@ public class DatabaseReviews {
             pstmt.setInt(3, courseNumber);
             pstmt.setInt(4, rating);
             pstmt.executeUpdate();
+            commit();
 //            if (affectedRows > 0) {
 //                System.out.println("Review added successfully.");
 //            } else {
@@ -243,6 +245,7 @@ public class DatabaseReviews {
             pstmt.setString(5, comment);
 
             pstmt.executeUpdate();
+            commit();
 //            if (affectedRows > 0) {
 //                System.out.println("Review added successfully for course: " + courseMnemonic);
 //            } else {
