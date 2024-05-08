@@ -43,10 +43,14 @@ public class CourseSearchController {
 
         // TODO: Set Action for clicking each row.
         list.setOnMouseClicked(event -> {
-//            LogInController login = new LogInController( stage );
+            Course selectedCourse = list.getSelectionModel().getSelectedItem();
+            String selectedMnemonic = selectedCourse.getMnemonic();
+            int selectedCourseNumber = selectedCourse.getCourseNumber();
+            String selectedTitle = selectedCourse.getCourseTitle();
+//            ReviewController review = new ReviewController( stage, selectedMnemonic, selectedCourseNumber, selectedTitle, username)
         });
 
-        // TODO: Action for Searching
+
         Button searchButton = new Button( "Search" );
         searchButton.setOnAction(event -> {
             String mnem = mnemonicInput.getText();
