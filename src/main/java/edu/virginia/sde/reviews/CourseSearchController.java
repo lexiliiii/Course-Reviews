@@ -43,7 +43,7 @@ public class CourseSearchController {
 
         // TODO: Set Action for clicking each row.
         list.setOnMouseClicked(event -> {
-//            CourseReview review = new CourseReview( stage, username );
+//            LogInController login = new LogInController( stage );
         });
 
         // TODO: Action for Searching
@@ -88,7 +88,7 @@ public class CourseSearchController {
 
         Button addButton = new Button( "Add Courses" );
         addButton.setOnAction(event -> {
-            CourseAdding add = new CourseAdding( stage );
+            CourseAdding add = new CourseAdding( stage, username );
         });
 
         // TODO: Connect to My Reviews Scene.
@@ -102,8 +102,10 @@ public class CourseSearchController {
             LogInController login = new LogInController( stage );
         });
 
+        Label currentUser = new Label( "  Current User:  " + username );
+
         HBox functionBox = new HBox( 10 );
-        functionBox.getChildren().addAll( addButton, myReviewButton, logOutButton );
+        functionBox.getChildren().addAll( addButton, myReviewButton, logOutButton, currentUser );
         functionBox.setAlignment( Pos.CENTER );
 
 
