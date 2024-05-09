@@ -7,17 +7,17 @@ public class Review {
     private String username;
     private String courseMnemonic;
     private int courseNumber;
-    private String courseTitle;
     private int rating;
+    private String courseTitle;
     private Timestamp timestamp;
     private String comment;
 
-    public Review(int reviewID, String username, String courseMnemonic, int courseNumber, String courseTitle, int rating, Timestamp timestamp, String comment) {
+    public Review(int reviewID, String username, String courseMnemonic, int courseNumber, int rating, Timestamp timestamp, String comment, String courseTitle) {
         this.reviewID = reviewID;
         this.username = username;
         this.courseMnemonic = courseMnemonic;
+        this.courseTitle=courseTitle;
         this.courseNumber = courseNumber;
-        this.courseTitle = courseTitle;
         this.rating = rating;
         this.timestamp = timestamp;
         this.comment = comment;
@@ -42,6 +42,14 @@ public class Review {
     public int getRating() {
         return rating;
     }
+    public String getCourseTitle() {
+        return courseTitle;
+    }
+
+    public void setCourseTitle(String courseTitle) {
+        this.courseTitle = courseTitle;
+    }
+
 
     public Timestamp getTimestamp() {
         return timestamp;
@@ -51,25 +59,13 @@ public class Review {
         return comment;
     }
 
-    public String getCourseTitle() {
-        return courseTitle;
-    }
-    public String setCourseTitle() {
-        return courseTitle;
-    }
-
     @Override
     public String toString() {
-        return "Review{" +
-                "reviewID=" + reviewID +
-                "username=" + username +
-                ", courseMnemonic='" + courseMnemonic + '\'' +
-                ", courseNumber=" + courseNumber +
-                ", courseTitle=" + courseTitle +
-                ", rating=" + rating +
-                ", timestamp=" + timestamp +
-                ", comment='" + comment + '\'' +
-                '}';
+        return  "Rating: "+ rating+"  "+
+        "Time" +" "+
+                timestamp +
+                "\n" + "\n"+
+                "commment: "+comment;
     }
 }
 
