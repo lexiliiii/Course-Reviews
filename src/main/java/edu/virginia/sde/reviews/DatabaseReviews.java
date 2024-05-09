@@ -237,7 +237,7 @@ public class DatabaseReviews {
             throw new IllegalStateException("Connection is closed right now.");
         }
 
-        String sql = "INSERT INTO Reviews (Username, CourseMnemonic, CourseNumber, Rating, Timestamp, Comment) VALUES (?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO Reviews (Username, CourseMnemonic, CourseNumber, Rating, Timestamp, Comment) VALUES (?, ?, ?, ?, ?, ?);";
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, username);
@@ -259,6 +259,28 @@ public class DatabaseReviews {
             throw new SQLException("Error adding Reviews: " + e.getMessage());
         }
     }
+
+    public void updateAverageRating(String courseMnemonic, int courseNumber) throws SQLException {
+        if (connection.isClosed()) {
+            throw new IllegalStateException("Connection is closed right now.");
+        }
+
+        double newAverage = getAvgScore(courseMnemonic, courseNumber);
+
+        String sql = "UPDATE Courses SET AverageReviewRating = ? WHERE CourseMnemonic = ? AND CourseNumber = ?;";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setDouble(1, newAverage);
+            pstmt.setString(2, courseMnemonic);
+            pstmt.setInt(3, courseNumber);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            connection.rollback();
+            throw new SQLException("Error updating average rating: " + e.getMessage());
+        }
+    }
+
 
     public List<Review> getReviewsForCourse(String courseMnemonic, int courseNumber) throws SQLException {
         if (connection.isClosed()) {
@@ -304,16 +326,69 @@ public class DatabaseReviews {
             pstmt.setInt(3, reviewID);
             pstmt.executeUpdate();
 
-//            if (affectedRows > 0) {
-//                System.out.println("Review updated successfully.");
-//            } else {
-//                throw new SQLException("Updating review failed, no rows affected.");
-//            }
         } catch (SQLException e) {
             connection.rollback();
-            throw new SQLException("Error updating reviews: " + e.getMessage());
+            throw new SQLException("Error updating Reviews: " + e.getMessage());
         }
     }
+
+    public void deleteReview(int reviewID) throws SQLException {
+        if (connection.isClosed()) {
+            throw new IllegalStateException("Connection is closed right now.");
+        }
+
+        String sql = "DELETE FROM Reviews WHERE ReviewID = ?;";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, reviewID);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            rollback();
+            throw new SQLException("Error deleting review: " + e.getMessage());
+        }
+    }
+
+    public void updateMyReview(String username, String courseMnemonic, int courseNumber, int newRating, String newComment) throws SQLException {
+        if (connection.isClosed()) {
+            throw new IllegalStateException("Connection is closed right now.");
+        }
+
+        String sql = "UPDATE MyReviews SET Rating = ?, Comment = ? WHERE Username = ? AND CourseMnemonic = ? AND CourseNumber = ?;";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, newRating);
+            pstmt.setString(2, newComment);
+            pstmt.setString(3, username);
+            pstmt.setString(4, courseMnemonic);
+            pstmt.setInt(5, courseNumber);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            rollback();
+            throw new SQLException("Error updating my review: " + e.getMessage());
+        }
+    }
+
+    public void deleteMyReview(String username, String courseMnemonic, int courseNumber) throws SQLException {
+        if (connection.isClosed()) {
+            throw new IllegalStateException("Connection is closed right now.");
+        }
+
+        String sql = "DELETE FROM MyReviews WHERE Username = ? AND CourseMnemonic = ? AND CourseNumber = ?;";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, courseMnemonic);
+            pstmt.setInt(3, courseNumber);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            rollback();
+            throw new SQLException("Error deleting my review: " + e.getMessage());
+        }
+    }
+
 
     public double getAvgScore(String courseMnemonic, int courseNumber) throws SQLException {
         if (connection.isClosed()) {
