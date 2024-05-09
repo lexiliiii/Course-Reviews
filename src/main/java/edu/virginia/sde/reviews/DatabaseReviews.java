@@ -433,11 +433,6 @@ public class DatabaseReviews {
 //
 //            driver.createTables();
 //
-////            List<User> allUser = driver.getAllUsers();
-////            for( int i = 0; i < allUser.size(); i++ ){
-////                System.out.println( allUser.get( i ) );
-////            }
-//
 //            driver.registerUser("Jack", "11111111");
 //            driver.registerUser("Helen", "22222222");
 //            driver.registerUser("Kelvin", "33333333");
@@ -451,9 +446,6 @@ public class DatabaseReviews {
 //            driver.addCourse("EDIS", 2200, "Designing Art, Music, & Games", 0.00);
 //            driver.addCourse("CS", 4501, "Introduction to Algorithmic Economics", 0.00);
 //            driver.addCourse("CS", 4501, "Cybersecurity and Elections", 0.00);
-//
-//            driver.addMyReview("Jack", "CS", 3100, "Data Structures and Algo",1);
-//            driver.addReview("Jack","CS", 3100, "Data Structures and Algo",1, new Timestamp(System.currentTimeMillis()),"");
 //
 //            driver.commit();
 //
