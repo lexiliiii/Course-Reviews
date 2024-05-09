@@ -4,15 +4,18 @@ public class MyReview {
     private String username;
     private String courseMnemonic;
     private int courseNumber;
+    private String courseTitle;
     private int rating;
 
-    public MyReview(String username, String courseMnemonic, int courseNumber, int rating) {
+    public MyReview(String username, String courseMnemonic, int courseNumber, String courseTitle, int rating) {
         this.username = username;
         this.courseMnemonic = courseMnemonic;
         this.courseNumber = courseNumber;
+        this.courseTitle = courseTitle;
         this.rating = rating;
     }
 
+    // Getter and setter for username
     public String getUsername() {
         return username;
     }
@@ -37,6 +40,14 @@ public class MyReview {
         this.courseNumber = courseNumber;
     }
 
+    public String getCourseTitle() {
+        return courseTitle;
+    }
+
+    public void setCourseTitle(String courseTitle) {
+        this.courseTitle = courseTitle;
+    }
+
     public int getRating() {
         return rating;
     }
@@ -45,11 +56,12 @@ public class MyReview {
         this.rating = rating;
     }
 
-        @Override
+    @Override
     public String toString() {
-        return courseMnemonic + '\'' +
-               + courseNumber +"\n" + "\n"+
-                "Rating: "+ rating
-               ;
+        return "Username: " + username + "\n" +
+                "Course Mnemonic: " + courseMnemonic + "\n" +
+                "Course Number: " + courseNumber + "\n" +
+                "Course Title: " + courseTitle + "\n" +
+                "Rating: " + rating;
     }
 }
