@@ -141,6 +141,7 @@ public class DatabaseReviews {
             pstmt.setString(3, title);
             pstmt.setDouble(4, avgPoint);
             pstmt.executeUpdate();
+            commit();
 
         } catch (SQLException e) {
             connection.rollback();
@@ -189,6 +190,7 @@ public class DatabaseReviews {
             pstmt.setString(4, courseTitle);
             pstmt.setInt(5, rating);
             pstmt.executeUpdate();
+
 
         } catch (SQLException e) {
             connection.rollback();
@@ -262,6 +264,7 @@ public class DatabaseReviews {
             pstmt.setDouble(1, newAverage);
             pstmt.setString(2, courseTitle);
             pstmt.executeUpdate();
+            commit();
 
         } catch (SQLException e) {
             connection.rollback();
@@ -314,6 +317,7 @@ public class DatabaseReviews {
             pstmt.setString(2, newComment);
             pstmt.setInt(3, reviewID);
             pstmt.executeUpdate();
+            commit();
 
         } catch (SQLException e) {
             connection.rollback();
@@ -331,6 +335,7 @@ public class DatabaseReviews {
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, reviewID);
             pstmt.executeUpdate();
+            commit();
 
         } catch (SQLException e) {
             rollback();
@@ -350,6 +355,7 @@ public class DatabaseReviews {
             pstmt.setString(2, username);
             pstmt.setString(3, courseTitle);
             pstmt.executeUpdate();
+            commit();
 
         } catch (SQLException e) {
             connection.rollback();
@@ -368,6 +374,7 @@ public class DatabaseReviews {
             pstmt.setString(1, username);
             pstmt.setString(2, courseTitle);
             pstmt.executeUpdate();
+            commit();
 
         } catch (SQLException e) {
             connection.rollback();
