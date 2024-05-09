@@ -92,12 +92,6 @@ public class DatabaseReviews {
         }
     }
 
-    /** Add users--Register
-     * @param username
-     * @param password
-     * @throws SQLException
-     */
-    //TODO: need to throw exception if 2 usernames are the same
     public void registerUser(String username, String password) throws SQLException {
         String sql = "INSERT INTO Users (Username, Password) VALUES (?, ?)";
 
@@ -259,6 +253,7 @@ public class DatabaseReviews {
 
         } catch (SQLException e) {
             connection.rollback();
+            e.printStackTrace();
             throw new SQLException("Error adding Reviews: " + e.getMessage());
         }
     }
@@ -425,6 +420,7 @@ public class DatabaseReviews {
             connection.createStatement().execute("DELETE FROM Reviews;");
             connection.createStatement().execute("DELETE FROM Courses;");
             connection.createStatement().execute("DELETE FROM Users;");
+            connection.createStatement().execute("DELETE FROM sqlite_sequence WHERE name = 'Reviews';");
 
         } catch (SQLException e) {
             connection.rollback();
@@ -432,44 +428,54 @@ public class DatabaseReviews {
         }
     }
 
-    public static void main(String[] args){
-        try {
-            DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
-
-            driver.connect();
-
-            driver.createTables();
-
-//            List<User> allUser = driver.getAllUsers();
-//            for( int i = 0; i < allUser.size(); i++ ){
-//                System.out.println( allUser.get( i ) );
-//            }
-
-//            driver.registerUser("test4","12");
-//            driver.registerUser("test5","1111111!!!");
-
-//            driver.addCourse("SDE", 3140, "Software Development Essentials", 0.00);
-//            driver.addMyReview("test1", "SDE", 3140, 1);
-//            driver.addReview("SDE", 3140, 1, new Timestamp(System.currentTimeMillis()), "shit");
+//    public static void main(String[] args){
+//        try {
+//            DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
 //
+//            driver.connect();
+//
+//            driver.createTables();
+//
+////            List<User> allUser = driver.getAllUsers();
+////            for( int i = 0; i < allUser.size(); i++ ){
+////                System.out.println( allUser.get( i ) );
+////            }
+//
+//            driver.registerUser("lll", "12345678");
+//            driver.registerUser("Jack", "11111111");
+//            driver.registerUser("Helen", "22222222");
+//            driver.registerUser("Kelvin", "33333333");
+//            driver.registerUser("Lady Gaga", "44444444");
+//            driver.registerUser("Nicki Minaj", "55555555");
+////
+//            driver.addCourse("CS", 3140, "Software Development Essentials", 0.00);
+//            driver.addCourse("CS", 3100, "Data Structures and Algo", 0.00);
+//            driver.addCourse("ENWR", 1510, "Writing and Critical Inquiry", 0.00);
+//            driver.addCourse("STAT", 3220, "Intro to Regression Analysis", 0.00);
+//            driver.addCourse("EDIS", 2200, "Designing Art, Music, & Games", 0.00);
+//
+//            driver.addMyReview("lll", "CS", 3100, 1);
+//            driver.addReview("lll","CS", 3100, 1, new Timestamp(System.currentTimeMillis()),"shit");
+////            driver.clearTables();
+////
 //            driver.commit();
-
-//            List<User> temp = driver.getAllUsers();
-//            System.out.println(temp);
-
-//            List<Course> temp = driver.getAllCourses();
-//            System.out.println(temp);
-
-//            List<MyReview> temp = driver.getMyReviews("test1");
-//            System.out.println(temp);
-
-//            List<Review> temp1 = driver.getReviewsForCourse("SDE", 3140);
-//            System.out.println(temp1);
-
-            driver.disconnect();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//
+////            List<User> temp = driver.getAllUsers();
+////            System.out.println(temp);
+//
+////            List<Course> temp = driver.getAllCourses();
+////            System.out.println(temp);
+//
+////            List<MyReview> temp = driver.getMyReviews("test1");
+////            System.out.println(temp);
+//
+////            List<Review> temp1 = driver.getReviewsForCourse("SDE", 3140);
+////            System.out.println(temp1);
+//
+//            driver.disconnect();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
