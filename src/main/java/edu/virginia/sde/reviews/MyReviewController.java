@@ -10,6 +10,8 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
@@ -22,6 +24,8 @@ public class MyReviewController {
     public MyReviewController(Stage stage, String username) throws SQLException {
         stage.setTitle("My Review");
         Label myreview = new Label(username+"'s review");
+        myreview.setFont( Font.font("Times New Roman", FontWeight.BOLD, 20) );
+        myreview.setStyle( "-fx-text-fill:white" );
         myreview.setAlignment(Pos.TOP_CENTER);
 
         ListView<MyReview> list = new ListView<MyReview>();
@@ -44,6 +48,7 @@ public class MyReviewController {
         });
 
         Button back = new Button("Back");
+        back.setFont(new Font("Times New Roman", 13));
         back.setOnAction(event -> {
             try {
                 CourseSearchController search = new CourseSearchController(stage, username);
@@ -60,6 +65,8 @@ public class MyReviewController {
         root.add(myreview, 0, 0);
         root.add(list, 0, 1);
         root.add(back, 0, 2);
+
+        root.setStyle("-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #bdc3c7 0%, #7595af 100%);");
 
         Scene scene = new Scene(root, 1280, 780);
         stage.setScene(scene);

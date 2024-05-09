@@ -307,17 +307,18 @@ public class DatabaseReviews {
     }
 
 
-    public void updateReview(int reviewID, int newRating, String newComment) throws SQLException {
+    public void updateReview(int reviewID, int newRating, Timestamp timestamp, String newComment) throws SQLException {
         if (connection.isClosed()) {
             throw new IllegalStateException("Connection is closed right now.");
         }
 
-        String sql = "UPDATE Reviews SET Rating = ?, Comment = ? WHERE ReviewID = ?;";
+        String sql = "UPDATE Reviews SET Rating = ?, Timestamp = ?, Comment = ? WHERE ReviewID = ?;";
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, newRating);
-            pstmt.setString(2, newComment);
-            pstmt.setInt(3, reviewID);
+            pstmt.setTimestamp(2, timestamp);
+            pstmt.setString(3, newComment);
+            pstmt.setInt(4, reviewID);
             pstmt.executeUpdate();
             commit();
 
