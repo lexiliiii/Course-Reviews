@@ -35,19 +35,19 @@ public class AddReviewController {
         inputRate.setPrefWidth( 200 );
         inputRate.setMaxWidth( 200 );
 
-        String rateString =inputRate.getText();
         Set<String> validInputs = new HashSet<>(Arrays.asList("1", "2", "3", "4", "5"));
 
         Label comment =new Label("Your Comment(Optional)");
         TextField inputComment=new TextField();
         inputComment.setPrefWidth( 300 );
         inputComment.setMaxWidth( 500 );
-        String words=inputComment.getText();
 
         Button addbutton=new Button();
         addbutton.setText("submit");
 
        addbutton.setOnAction(event-> {
+           String rateString = inputRate.getText();
+           String words=inputComment.getText();
            try {
                if(validInputs.contains(rateString)){
                    int rating=Integer.parseInt(rateString);
@@ -79,7 +79,7 @@ public class AddReviewController {
         inputBox.setAlignment( Pos.CENTER );
 
         VBox addBox = new VBox( 10 );
-        addBox.getChildren().addAll( myreview,errorLabel2,inputBox,errorLabel,comment,inputComment
+        addBox.getChildren().addAll( myreview,errorLabel2,inputBox,errorLabel,comment,inputComment,addbutton
           );
         addBox.setAlignment( Pos.CENTER );
 
