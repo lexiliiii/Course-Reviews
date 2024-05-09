@@ -131,6 +131,7 @@ boolean added;
             try {
                 addReview(username, mneomic, coursenum, coursetitle,rateString, new Timestamp(System.currentTimeMillis()), words);
                 addMyReview( username,mneomic,coursenum, rateString, coursetitle );
+
                 inputRate.clear();
                 inputComment.clear();
                 errorLabel.setText("Review added successfully.");
@@ -163,6 +164,7 @@ boolean added;
         try {
             database.deleteReview(ownreview.getReviewID());
             database.deleteMyReview(username, ownreview.getCourseTitle());
+            database.updateAverageRating( coursetitle );
             database.commit();
             database.disconnect();
             errorlabel.setText("Delete Review Successfully");
@@ -216,6 +218,7 @@ boolean added;
         driver.connect();
         driver.createTables();
         driver.addReview( username,mneomic,coursenum, courseTitle,rate, time, words);
+        driver.updateAverageRating( courseTitle );
         driver.disconnect();
     }
     private void addMyReview(String username, String mneomic, int coursenum, String rating, String coursetitle) throws SQLException {
@@ -224,6 +227,7 @@ boolean added;
         driver.connect();
         driver.createTables();
         driver.addMyReview(username,mneomic,coursenum,coursetitle,rate);
+        driver.updateAverageRating( coursetitle );
         driver.disconnect();
     }
 

@@ -191,7 +191,7 @@ public class DatabaseReviews {
             pstmt.setString(4, courseTitle);
             pstmt.setInt(5, rating);
             pstmt.executeUpdate();
-
+            commit();
 
         } catch (SQLException e) {
             connection.rollback();
@@ -245,6 +245,7 @@ public class DatabaseReviews {
             pstmt.setTimestamp(6, timestamp);
             pstmt.setString(7, comment);
             pstmt.executeUpdate();
+            commit();
 
         } catch (SQLException e) {
             connection.rollback();
