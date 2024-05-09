@@ -97,5 +97,4 @@ public class AddReviewController {
         stage.setScene(scene);
         stage.show();
     }
-
 }

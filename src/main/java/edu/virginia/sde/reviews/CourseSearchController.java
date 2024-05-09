@@ -46,8 +46,9 @@ public class CourseSearchController {
             Course selectedCourse = list.getSelectionModel().getSelectedItem();
             String selectedMnemonic = selectedCourse.getMnemonic();
             int selectedCourseNumber = selectedCourse.getCourseNumber();
+            String selectedCourseTitel = selectedCourse.getCourseTitle();
             try {
-                CourseReviewController review = new CourseReviewController( stage, username,selectedMnemonic,selectedCourseNumber);
+                CourseReviewController review = new CourseReviewController( stage, username,selectedMnemonic,selectedCourseNumber,selectedCourseTitel);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
