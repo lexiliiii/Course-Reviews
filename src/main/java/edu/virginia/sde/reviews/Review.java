@@ -7,15 +7,17 @@ public class Review {
     private String username;
     private String courseMnemonic;
     private int courseNumber;
+    private String courseTitle;
     private int rating;
     private Timestamp timestamp;
     private String comment;
 
-    public Review(int reviewID, String username, String courseMnemonic, int courseNumber, int rating, Timestamp timestamp, String comment) {
+    public Review(int reviewID, String username, String courseMnemonic, int courseNumber, String courseTitle, int rating, Timestamp timestamp, String comment) {
         this.reviewID = reviewID;
         this.username = username;
         this.courseMnemonic = courseMnemonic;
         this.courseNumber = courseNumber;
+        this.courseTitle = courseTitle;
         this.rating = rating;
         this.timestamp = timestamp;
         this.comment = comment;
@@ -49,6 +51,13 @@ public class Review {
         return comment;
     }
 
+    public String getCourseTitle() {
+        return courseTitle;
+    }
+    public String setCourseTitle() {
+        return courseTitle;
+    }
+
     @Override
     public String toString() {
         return "Review{" +
@@ -56,6 +65,7 @@ public class Review {
                 "username=" + username +
                 ", courseMnemonic='" + courseMnemonic + '\'' +
                 ", courseNumber=" + courseNumber +
+                ", courseTitle=" + courseTitle +
                 ", rating=" + rating +
                 ", timestamp=" + timestamp +
                 ", comment='" + comment + '\'' +
