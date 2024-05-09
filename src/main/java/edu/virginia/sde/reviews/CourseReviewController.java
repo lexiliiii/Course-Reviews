@@ -1,5 +1,4 @@
 package edu.virginia.sde.reviews;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -17,13 +16,14 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Wrapper;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class CourseReviewController {
-
+boolean added;
     private Course getCourse(String mnemoic, int number) throws SQLException {
         DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
         driver.connect();
@@ -40,14 +40,11 @@ public class CourseReviewController {
 
     public CourseReviewController(Stage stage, String username, String mneomic, int coursenum, String coursetitle) throws SQLException {
         stage.setTitle("Course Review");
-//        DatabaseReviews database = new DatabaseReviews("reviews.sqlite");
-//        database.connect();
-//        database.createTables();
 
         final ObservableListWrapper wrapper = new ObservableListWrapper(FXCollections.observableArrayList());
         ListView<Review> list = new ListView<>();
         try {
-            wrapper.setList(viewableReview(mneomic, coursenum,coursetitle)); // Populate the wrapper
+            wrapper.setList(viewableReview(coursetitle)); // Populate the wrapper
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -56,7 +53,7 @@ public class CourseReviewController {
         list.setPrefHeight(600);
 
         final Review[] ownreviewWrapper = new Review[1];
-        boolean added = false;
+        added = false;
         for (Review review :wrapper.getList()) {
             if (review.getUsername().equals(username)) {
                 added = true;
@@ -74,12 +71,12 @@ public class CourseReviewController {
         Label reviewLabel = new Label("Review for " + mneomic + coursenum + ": " + course.getCourseTitle());
         Label averagelable=new Label("Average Rating: "+average);
 
-        TextField inputRate = new TextField();
-        inputRate.setPrefWidth(200);
-        TextArea inputComment = new TextArea();
-        inputComment.setPrefWidth(500);
-        inputComment.setPrefHeight(200);
-        inputComment.setWrapText(true);
+//        TextField inputRate = new TextField();
+//        inputRate.setPrefWidth(200);
+//        TextArea inputComment = new TextArea();
+//        inputComment.setPrefWidth(500);
+//        inputComment.setPrefHeight(200);
+//        inputComment.setWrapText(true);
 
         Button addButton = new Button("Submit");
         Button backButton = new Button("Back");
@@ -87,41 +84,36 @@ public class CourseReviewController {
         Button deleteButton = new Button("Delete");
         Label errorLabel = new Label();
 
-        addButton.setOnAction(event -> handleAddButton( inputRate, inputComment, username, mneomic, coursenum, list, errorLabel,coursetitle));
-        backButton.setOnAction(event -> handleBackButton(stage, username));
+//        addButton.setOnAction(event -> handleAddButton( inputRate, inputComment, username, mneomic, coursenum, list, errorLabel,coursetitle));
+//        backButton.setOnAction(event -> handleBackButton(stage, username));
         deleteButton.setOnAction(event -> {
             try {
-                handleDeleteButton(stage,username,ownreviewWrapper[0],mneomic,coursenum,list,errorLabel, coursetitle);
+                handleDeleteButton(username, ownreviewWrapper[0], list, errorLabel, coursetitle);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         });
-        editButton.setOnAction(event -> {  if (ownreviewWrapper[0] != null) {
-            try {
-                EditReviewScene editReviewScene = new EditReviewScene(stage, ownreviewWrapper[0]);
-            } catch (Exception e) {
-                errorLabel.setText("Failed to open edit review screen: " + e.getMessage());
-                e.printStackTrace();
-            }
-        } else {
-            errorLabel.setText("No review available to edit.");
-        }
-        });
+//        editButton.setOnAction(event -> {  if (ownreviewWrapper[0] != null) {
+//            try {
+//                EditReviewScene editReviewScene = new EditReviewScene(stage, ownreviewWrapper[0]);
+//            } catch (Exception e) {
+//                errorLabel.setText("Failed to open edit review screen: " + e.getMessage());
+//                e.printStackTrace();
+//            }
+//        } else {
+//            errorLabel.setText("No review available to edit.");
+//        }
+//        });
 
         VBox label=new VBox(reviewLabel,averagelable);
+        VBox reviewControls=new VBox();
+        if(added==true){
+            reviewControls=createControlsBox(username,list,coursetitle,ownreviewWrapper[0],stage);
+        }
+        else if(added==false){
+            reviewControls=createControlsBox(username,mneomic,coursenum,list,coursetitle,ownreviewWrapper[0],stage);
+        }
 
-        Label addrating=new Label("Your Rating (1-5)");
-        Label addcomment=new Label("Your Comment (Optional)");
-
-        VBox reviewControls = new VBox(10, addrating, inputRate, addcomment, inputComment, addButton, editButton, deleteButton, errorLabel);
-        reviewControls.setAlignment(Pos.CENTER);
-
-        Label yourrating=new Label("Your Rating");
-        Label rating=new Label();
-        Label yourcomment=new Label("Your Comment");
-        Label yourwords=new Label();
-
-        VBox reviewEdit=new VBox();
 
         HBox mainContent = new HBox(20, listScrollPane, reviewControls);
         mainContent.setAlignment(Pos.CENTER);
@@ -143,7 +135,6 @@ public class CourseReviewController {
         String words = inputComment.getText().trim();
         Set<String> validInputs = new HashSet<>(Arrays.asList("1", "2", "3", "4", "5"));
         if (validInputs.contains(rateString)) {
-            int rate=Integer.parseInt(rateString);
             try {
                 addReview(username, mneomic, coursenum, coursetitle,rateString, new Timestamp(System.currentTimeMillis()), words);
                 addMyReview(username,mneomic,coursenum,coursetitle,rateString);
@@ -152,9 +143,7 @@ public class CourseReviewController {
                 errorLabel.setText("Review added successfully.");
 
                 // Reload the review items to reflect new data
-                ObservableList<Review> updatedItems = viewableReview(mneomic,coursenum,coursetitle);
-                list.setItems(updatedItems); // Update the ListView with new items
-                list.refresh(); // Force the list to refresh its content
+               refreshListView(coursetitle,list);
             } catch (SQLException e) {
                 errorLabel.setText("Failed to add review: " + e.getMessage());
                 e.printStackTrace();
@@ -174,7 +163,7 @@ public class CourseReviewController {
             throw new RuntimeException("Error navigating back to course search: " + e.getMessage(), e);
         }
     }
-    private void handleDeleteButton(Stage stage, String username,Review ownreview,String mneomic,int coursenum, ListView<Review> list,Label errorlabel,String coursetitle) throws SQLException {
+    private void handleDeleteButton( String username,Review ownreview, ListView<Review> list,Label errorlabel,String coursetitle) throws SQLException {
         DatabaseReviews database = new DatabaseReviews("reviews.sqlite");
         database.connect();
         database.createTables();
@@ -184,16 +173,14 @@ public class CourseReviewController {
             database.commit();
             database.disconnect();
             errorlabel.setText("Delete Review Successfully");
-            ObservableList<Review> updatedItems = viewableReview(username,coursenum,coursetitle);
-            list.setItems(updatedItems); // Update the ListView with new items
-            list.refresh(); // Force the list to refresh its content
+            refreshListView(coursetitle,list);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
 
-    private ObservableList<Review> viewableReview(String mneomic,int coursenum, String courseTitle) throws SQLException {
+    private ObservableList<Review> viewableReview(String courseTitle) throws SQLException {
         DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
         driver.connect();
         driver.createTables();
@@ -244,6 +231,64 @@ public class CourseReviewController {
         driver.createTables();
         driver.addMyReview(username,mneomic,coursenum,coursetitle,rate);
         driver.disconnect();
+    }
+
+    private void refreshListView(String coursetitle, ListView<Review> listView) throws SQLException {
+        ObservableList<Review> updatedItems = viewableReview(coursetitle);
+        listView.setItems(updatedItems);
+        listView.refresh();
+    }
+
+    private VBox createControlsBox(String username, String mnemonic, int courseNum, ListView<Review> listView,String coursetitle,Review review, Stage stage) {
+        Label yourate=new Label("Your Rating()");
+        TextField inputRate = new TextField();
+        Label yousay=new Label("Your Comment (Optional)");
+        inputRate.setPrefWidth(200);
+        TextArea inputComment = new TextArea();
+        inputComment.setPrefWidth(500);
+        inputComment.setPrefHeight(200);
+        inputComment.setWrapText(true);
+
+        Button addButton = new Button("Add");
+        Label errorLabel = new Label();
+
+        addButton.setOnAction(event ->{
+            handleAddButton( inputRate,inputComment,username,mnemonic,courseNum,listView, errorLabel,coursetitle);
+            added=true;
+        });
+
+
+            return new VBox(10, yourate, inputRate, yousay, inputComment, addButton, errorLabel);
+    }
+    private VBox createControlsBox(String username, ListView<Review> listView,String coursetitle,Review review, Stage stage) {
+        Label yourrating=new Label("Your Rating");
+        Label rating=new Label(String.valueOf(review.getRating()));
+        Label yourcomment=new Label("Your Comment");
+        Label yourwords=new Label(review.getComment());
+
+        Button editButton = new Button("Edit");
+        Button deleteButton = new Button("Delete");
+        Label errorLabel = new Label();
+        editButton.setOnAction(event -> {
+                try {
+                    EditReviewScene editReviewScene = new EditReviewScene(stage, review);
+                    added=true;
+                    refreshListView(coursetitle,listView);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+        });
+        deleteButton.setOnAction(event -> {
+            try {
+                handleDeleteButton( username,review, listView, errorLabel,coursetitle);
+                added=false;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        HBox ratelabel=new HBox(10);
+        ratelabel.getChildren().addAll(yourrating,rating);
+        return new VBox(10, ratelabel, yourcomment, yourwords, editButton, deleteButton, errorLabel);
     }
 
 }

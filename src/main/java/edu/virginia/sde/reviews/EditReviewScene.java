@@ -18,56 +18,43 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 public class EditReviewScene {
     public EditReviewScene(Stage stage,Review review) throws SQLException {
-        DatabaseReviews database=new DatabaseReviews("reviews.sqlite");
-
-        database.connect();
-        database.createTables();
-
-        stage.setTitle("Add Review");
-        Label myreview = new Label( "Add Your Review" );
+        stage.setTitle("Edit Review");
+        Label myreview = new Label( "Edit Your Review" );
         Label errorLabel=new Label();
 
         Label myrating =new Label("Your Rating(1-5)");
         TextField inputRate =new TextField();
-        String rateString =inputRate.getText();
-        Set<String> validInputs = new HashSet<>(Arrays.asList("1", "2", "3", "4", "5"));
+
         Label comment =new Label("Your Comment(Optional)");
         TextField inputComment=new TextField();
-        String newcomment=inputComment.getText();
 
         Button addbutton=new Button();
         addbutton.setText("submit");
 
         addbutton.setOnAction(event-> {
-            try {
-                if(validInputs.contains(rateString)){
-                    int newrating=Integer.parseInt(rateString);
-                    if(newcomment.isEmpty()){
-                        database.updateReview(review.getReviewID(),newrating," ");
+            String rateString = inputRate.getText();
+            String newcomment = inputComment.getText();
+            Set<String> validInputs = new HashSet<>(Arrays.asList("1", "2", "3", "4", "5"));
+            if(validInputs.contains(rateString)) {
+                try {
+                    if (newcomment.isEmpty()) {
+                        updateReview(review.getReviewID(), rateString, " ");
+                    } else {
+                        updateReview(review.getReviewID(), rateString, newcomment);
                     }
-                    else{
-                        database.updateReview(review.getReviewID(),newrating,newcomment);
-                    }
-                    database.commit();
-                    database.disconnect();
+                    updateMyReview(review, rateString, newcomment);
                     inputComment.clear();
                     inputRate.clear();
-                    String Username=review.getUsername();
-                    String Mnemonic=review.getCourseMnemonic();
-                    int CourseNum=review.getCourseNumber();
-                    String Title = review.getCourseTitle();
-                    CourseReviewController courseReview=new CourseReviewController(stage,Username,Mnemonic,CourseNum, Title);
-
+                    errorLabel.setText("Successfully Edited Review");
+                    CourseReviewController reviewscene = new CourseReviewController(stage, review.getUsername(), review.getCourseMnemonic(), review.getCourseNumber(),review.getCourseTitle());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
-
-                else{
-                    inputRate.clear();
-                    inputComment.clear();
-                    errorLabel.setText("Invalid Rating");
-                }
-
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+            }
+            else{
+                inputRate.clear();
+                inputComment.clear();
+                errorLabel.setText("Invalid Rating");
             }
         });
 
@@ -80,7 +67,7 @@ public class EditReviewScene {
         inputBox.setAlignment( Pos.CENTER );
 
         VBox addBox = new VBox( 10 );
-        addBox.getChildren().addAll( myreview,errorLabel2,inputBox,errorLabel,comment,inputComment
+        addBox.getChildren().addAll( myreview,errorLabel2,inputBox,errorLabel,comment,inputComment,addbutton
         );
         addBox.setAlignment( Pos.CENTER );
 
@@ -97,6 +84,31 @@ public class EditReviewScene {
         Scene scene = new Scene( root,1280, 780 );
         stage.setScene(scene);
         stage.show();
+    }
+    private void updateReview(int reviewID,String newrating,String comments ) throws SQLException {
+        int score=Integer.parseInt(newrating);
+        if (comments.isEmpty()) {
+            comments = " ";
+        }
+        DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
+        driver.connect();
+        driver.createTables();
+        driver.updateReview(reviewID,score,comments);
+        driver.disconnect();
+    }
+    private void updateMyReview(Review review,String newrating,String comments ) throws SQLException {
+        int score=Integer.parseInt(newrating);
+        if (comments.isEmpty()) {
+            comments = " ";
+        }
+        DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
+        driver.connect();
+        driver.createTables();
+        String username=review.getUsername();
+        String mneomic=review.getCourseMnemonic();
+        int coursenum=review.getCourseNumber();
+        driver.updateMyReview(username,review.getCourseTitle(),score );
+        driver.disconnect();
     }
 
 }

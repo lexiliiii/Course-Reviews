@@ -36,7 +36,7 @@ public class MyReviewController {
                 String mnemonic=selectedReview.getCourseMnemonic();
                 int coursenum=selectedReview.getCourseNumber();
                 try {
-                    CourseReviewController courseReview = new CourseReviewController(stage, username, selectedReview.getCourseMnemonic(), selectedReview.getCourseNumber(),selectedReview.getCourseTitle());
+                    CourseReviewController courseReview = new CourseReviewController(stage, username, mnemonic, coursenum,selectedReview.getCourseTitle());
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
