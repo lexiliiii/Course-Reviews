@@ -89,16 +89,22 @@ public class NewUserRegisterController {
             String username = input_userName.getText();
             String password = input_password.getText();
             try {
-                if ( userNameAuthenticate( username, password) ) {
+                if ( userNameAuthenticate( username ) && userPasswordAuthenticate( password ) ) {
                     errorLabel.setText("");
                     registerUser( username, password );
                     input_userName.clear();
                     input_password.clear();
                     LogInController login = new LogInController( stage );
-                } else {
+                }
+                else if ( userNameAuthenticate( username ) != true ) {
                     input_userName.clear();
                     input_password.clear();
-                    errorLabel.setText("Invalid username or password.");
+                    errorLabel.setText("Invalid username, please try another one.");
+                }
+                else if ( userPasswordAuthenticate( password ) != true ) {
+                    input_userName.clear();
+                    input_password.clear();
+                    errorLabel.setText("Invalid password, pleas make sure it is at least 8 characters.");
                 }
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
@@ -112,11 +118,14 @@ public class NewUserRegisterController {
         stage.show();
     }
 
-    private boolean userNameAuthenticate( String username, String password ) throws SQLException {
+    private boolean userPasswordAuthenticate( String password ){
         if( password.length() < 8 ){
             return false;
         }
+        return true;
+    }
 
+    private boolean userNameAuthenticate( String username ) throws SQLException {
         DatabaseReviews driver = new DatabaseReviews("reviews.sqlite" );
         driver.connect();
         driver.createTables();
