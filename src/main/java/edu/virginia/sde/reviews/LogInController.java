@@ -9,7 +9,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
-
+import javafx.scene.text.FontWeight;
+import javafx.scene.control.PasswordField;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -17,31 +20,43 @@ public class LogInController {
 
     public LogInController(Stage stage){
         stage.setTitle( "Log In" );
+//        stage.getScene().getStylesheets().add("style.css"); // Ensure you have a 'style.css' in your resources.
 
-        Label logInInstruction = new Label( "Welcome! Please log in into your account" );
+        Label logInInstruction = new Label( "Welcome!" );
+        logInInstruction.setFont(Font.font("Times New Roman", FontWeight.BOLD, 40));
+        logInInstruction.setStyle("-fx-text-fill:white");
 
         // Ask for Username
-        Label userNameRequest = new Label( "Username:" );
+        Label userNameRequest = new Label( "Username" );
         TextField input_userName = new TextField( );
         input_userName.setPrefWidth( 200 );
         input_userName.setMaxWidth( 200 );
+        userNameRequest.setFont(new Font("Times New Roman", 17));
+        userNameRequest.setStyle("-fx-text-fill: white");
 
         // Ask for Password
-        Label passwordRequest = new Label( "Password:" );
+        Label passwordRequest = new Label( "Password" );
         TextField input_password = new TextField( );
         input_password.setPrefWidth( 200 );
         input_password.setMaxWidth( 200 );
+        passwordRequest.setFont(new Font("Times New Roman", 17));
+        passwordRequest.setStyle("-fx-text-fill: white");
 
         // Buttons lead to next step
         Button logInButton = new Button( "Log In" );
         logInButton.setPrefSize( 75, 20 );
         Button registerButton = new Button( "New User Register" );
+        logInButton.setFont(new Font("Times New Roman", 14));
+        registerButton.setFont(new Font("Times New Roman", 14));
+
 //        registerButton.setPrefSize( 100, 20 );
 
         // Close buttons
         Button closeButton = new Button("Exit");
 //        closeButton.setPrefSize(100, 20);
         closeButton.setOnAction(event -> stage.close());
+        closeButton.setFont(new Font("Times New Roman", 14));
+
 
 //        // Lay out the Close button
 //        HBox close = new HBox(10 );
@@ -77,6 +92,8 @@ public class LogInController {
         Label errorLabel = new Label();
         root.getChildren().add( errorLabel );
 
+        root.setStyle("-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #bdc3c7 0%, #2c3e50 100%);");
+
         logInButton.setOnAction(e -> {
             String username = input_userName.getText();
             String password = input_password.getText();
@@ -106,7 +123,6 @@ public class LogInController {
         stage.show();
     }
 
-
     private boolean authenticate( String username, String password ) throws SQLException {
         DatabaseReviews driver = new DatabaseReviews("reviews.sqlite" );
         driver.connect();
@@ -123,9 +139,8 @@ public class LogInController {
                 }
             }
         }
+
         driver.disconnect();
-
         return result;
-
     }
 }
