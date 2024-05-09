@@ -341,6 +341,7 @@ public class DatabaseReviews {
             pstmt.executeUpdate();
             commit();
 
+
         } catch (SQLException e) {
             rollback();
             throw new SQLException("Error deleting review: " + e.getMessage());
@@ -380,6 +381,7 @@ public class DatabaseReviews {
             pstmt.setString(2, courseTitle);
             pstmt.executeUpdate();
             commit();
+            updateAverageRating( courseTitle );
 
         } catch (SQLException e) {
             connection.rollback();
