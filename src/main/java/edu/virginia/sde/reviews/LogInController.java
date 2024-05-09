@@ -22,16 +22,20 @@ public class LogInController {
         stage.setTitle( "Log In" );
 //        stage.getScene().getStylesheets().add("style.css"); // Ensure you have a 'style.css' in your resources.
 
-        Label logInInstruction = new Label( "Welcome!" );
-        logInInstruction.setFont(Font.font("Times New Roman", FontWeight.BOLD, 40));
-        logInInstruction.setStyle("-fx-text-fill:white");
+        Label welcomeInstruction = new Label( "Welcome" );
+        welcomeInstruction.setFont( Font.font("Times New Roman", FontWeight.BOLD, 35) );
+        welcomeInstruction.setStyle( "-fx-text-fill:white" );
+        Label logInInstruction = new Label( "Please log in to your account below" );
+        logInInstruction.setFont( Font.font("Times New Roman", FontWeight.BOLD, 25) );
+        logInInstruction.setStyle( "-fx-text-fill:white" );
+
 
         // Ask for Username
         Label userNameRequest = new Label( "Username" );
         TextField input_userName = new TextField( );
         input_userName.setPrefWidth( 200 );
         input_userName.setMaxWidth( 200 );
-        userNameRequest.setFont(new Font("Times New Roman", 17));
+        userNameRequest.setFont( Font.font("Times New Roman", FontWeight.BOLD, 17) );
         userNameRequest.setStyle("-fx-text-fill: white");
 
         // Ask for Password
@@ -39,7 +43,7 @@ public class LogInController {
         TextField input_password = new TextField( );
         input_password.setPrefWidth( 200 );
         input_password.setMaxWidth( 200 );
-        passwordRequest.setFont(new Font("Times New Roman", 17));
+        passwordRequest.setFont( Font.font("Times New Roman", FontWeight.BOLD, 17) );
         passwordRequest.setStyle("-fx-text-fill: white");
 
         // Buttons lead to next step
@@ -64,12 +68,12 @@ public class LogInController {
 //        close.setAlignment( Pos.BOTTOM_RIGHT );
 
         // Lay out the Username line horizontally
-        HBox userNameBox = new HBox( 10 );
+        HBox userNameBox = new HBox( 15 );
         userNameBox.getChildren().addAll( userNameRequest, input_userName );
         userNameBox.setAlignment( Pos.CENTER );
 
         // Lay out the Password line horizontally
-        HBox passwordBox = new HBox( 10 );
+        HBox passwordBox = new HBox( 15 );
         passwordBox.getChildren().addAll( passwordRequest, input_password );
         passwordBox.setAlignment( Pos.CENTER );
 
@@ -83,6 +87,7 @@ public class LogInController {
         root.setSpacing( 15 );
         root.setAlignment( Pos.CENTER );
 
+        root.getChildren().add( welcomeInstruction );
         root.getChildren().add( logInInstruction );
         root.getChildren().add( userNameBox );
         root.getChildren().add( passwordBox );
@@ -90,9 +95,11 @@ public class LogInController {
 //        root.getChildren().add( close );
 
         Label errorLabel = new Label();
+        errorLabel.setFont( new Font( "Times New Roman", 14) );
+        errorLabel.setStyle( "-fx-text-fill:red" );
         root.getChildren().add( errorLabel );
 
-        root.setStyle("-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #bdc3c7 0%, #2c3e50 100%);");
+        root.setStyle("-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #bdc3c7 0%, #7595af 100%);");
 
         logInButton.setOnAction(e -> {
             String username = input_userName.getText();
