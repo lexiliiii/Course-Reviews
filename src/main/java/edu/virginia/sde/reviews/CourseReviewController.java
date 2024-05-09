@@ -71,7 +71,8 @@ public class CourseReviewController {
 
         Course course = getCourse(mneomic, coursenum);
         double average = getAverage(mneomic, coursenum);
-        Label reviewLabel = new Label("Review for " + mneomic + coursenum + ": " + course.getCourseTitle() + "  Average Rating: " + average);
+        Label reviewLabel = new Label("Review for " + mneomic + coursenum + ": " + course.getCourseTitle());
+        Label averagelable=new Label("Average Rating: "+average);
 
         TextField inputRate = new TextField();
         inputRate.setPrefWidth(200);
@@ -111,6 +112,8 @@ public class CourseReviewController {
 
         });
 
+        VBox label=new VBox(reviewLabel,averagelable);
+
         VBox reviewControls = new VBox(10, new Label("Your Rating (1-5)"), inputRate, new Label("Your Comment (Optional)"), inputComment, addButton, editButton, deleteButton, errorLabel);
         reviewControls.setAlignment(Pos.CENTER);
 
@@ -121,7 +124,7 @@ public class CourseReviewController {
         root.setHgap(30);
         root.setVgap(30);
         root.setPadding(new Insets(30));
-        root.add(reviewLabel, 0, 0);
+        root.add(label, 0, 0);
         root.add(mainContent, 0, 1);
         root.add(backButton, 0, 2);
 
@@ -132,23 +135,37 @@ public class CourseReviewController {
 
     private void handleAddButton(DatabaseReviews database, TextField inputRate, TextArea inputComment, String username, String mneomic, int coursenum, ObservableList<Review> reviews, ListView<Review> list, Label errorLabel) {
         String rateString = inputRate.getText();
+        String words = inputComment.getText();
         Set<String> validInputs = new HashSet<>(Arrays.asList("1", "2", "3", "4", "5"));
+
         if (validInputs.contains(rateString)) {
             try {
                 int rating = Integer.parseInt(rateString);
-                String comment = inputComment.getText();
-                database.addReview(username, mneomic, coursenum, rating, new Timestamp(System.currentTimeMillis()), comment);
+                database.addReview(username, mneomic, coursenum, rating, new Timestamp(System.currentTimeMillis()), words);
                 database.addMyReview(username, mneomic, coursenum, rating);
-                database.commit();
+                database.commit();  // Ensure commit is called to save the changes
+                database.disconnect();
+                // Clear the fields
                 inputRate.clear();
                 inputComment.clear();
-                reviews.setAll(viewableReview(mneomic, coursenum));
-                list.refresh();
+
+                // Reload the review items to reflect new data
+                ObservableList<Review> updatedItems = viewableReview(mneomic, coursenum);
+                list.setItems(updatedItems); // Update the ListView with new items
+                list.refresh(); // Force the list to refresh its content
+
+
             } catch (SQLException e) {
-                errorLabel.setText("Database error");
+                errorLabel.setText("Database error: " + e.getMessage());
+                e.printStackTrace();
             }
+        } else {
+            errorLabel.setText("Invalid rating. Please enter a number between 1 and 5.");
+            inputRate.clear();
+            inputComment.clear();
         }
-    }
+    };
+
     private void handleBackButton(Stage stage, String username) {
         try {
             CourseSearchController search = new CourseSearchController(stage, username);
