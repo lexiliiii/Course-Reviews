@@ -60,11 +60,19 @@ public class Course {
     @Override
     public String toString() {
         String formattedRate = String.format("%.2f", avgRating );
+        String c = "";
 //        String c = mnemonic+ courseNumber +
 //                " " + courseTitle + " " + "avgRating: " + formattedRate;
-        String c = mnemonic.toUpperCase() + courseNumber +
-                "\n" + courseTitle +
-                "\n" + "\n" + "Average Rating:  " + formattedRate;
+        if( avgRating == 0 ){
+            c = mnemonic.toUpperCase() + courseNumber +
+                    "\n" + courseTitle +
+                    "\n" + "\n" + "Average Rating:  " + " ";
+        }
+        else{
+            c = mnemonic.toUpperCase() + courseNumber +
+                    "\n" + courseTitle +
+                    "\n" + "\n" + "Average Rating:  " + formattedRate;
+        }
         return c;
 
     }

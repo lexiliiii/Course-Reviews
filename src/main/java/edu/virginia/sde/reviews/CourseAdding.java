@@ -167,7 +167,7 @@ public class CourseAdding {
 //                    && course.getCourseTitle().equals( title )){
 //                return true;
 //            }
-            if( course.getMnemonic().equals( mnem ) && course.getCourseNumber() == num ){
+            if( course.getMnemonic().equals( mnem ) && course.getCourseNumber() == num && course.getCourseTitle().equals(title)){
                 return true;
             }
         }
