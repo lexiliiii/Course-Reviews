@@ -245,4 +245,5 @@ public class CourseReviewController {
         driver.addMyReview(username,mneomic,coursenum,coursetitle,rate);
         driver.disconnect();
     }
+
 }
