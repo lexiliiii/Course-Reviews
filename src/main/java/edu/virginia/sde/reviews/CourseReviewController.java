@@ -83,16 +83,9 @@ boolean added;
         Button editButton = new Button("Edit");
         Button deleteButton = new Button("Delete");
         Label errorLabel = new Label();
-
+        backButton.setOnAction(event -> handleBackButton(stage, username));
 //        addButton.setOnAction(event -> handleAddButton( inputRate, inputComment, username, mneomic, coursenum, list, errorLabel,coursetitle));
 //        backButton.setOnAction(event -> handleBackButton(stage, username));
-        deleteButton.setOnAction(event -> {
-            try {
-                handleDeleteButton(username, ownreviewWrapper[0], list, errorLabel, coursetitle);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
 //        editButton.setOnAction(event -> {  if (ownreviewWrapper[0] != null) {
 //            try {
 //                EditReviewScene editReviewScene = new EditReviewScene(stage, ownreviewWrapper[0]);
@@ -286,6 +279,7 @@ boolean added;
                 throw new RuntimeException(e);
             }
         });
+
         HBox ratelabel=new HBox(10);
         ratelabel.getChildren().addAll(yourrating,rating);
         return new VBox(10, ratelabel, yourcomment, yourwords, editButton, deleteButton, errorLabel);
