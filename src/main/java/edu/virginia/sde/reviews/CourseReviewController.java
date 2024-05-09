@@ -160,7 +160,7 @@ public class CourseReviewController {
                 }
             }
             else {
-                errorLabel.setText( "Your rating should be a integer between 1 - 5! " );
+                errorLabel.setText( "Your rating should be an integer between 1 - 5! " );
                 errorLabel.setFont( new Font( "Times New Roman", 14) );
                 errorLabel.setStyle( "-fx-text-fill:red" );
             }
