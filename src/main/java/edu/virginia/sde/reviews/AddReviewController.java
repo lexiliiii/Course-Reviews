@@ -18,7 +18,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 public class AddReviewController {
-    public AddReviewController(Stage stage, String Mnemonic, int CourseNum,String Username) throws SQLException {
+    public AddReviewController(Stage stage, String Mnemonic, int CourseNum,String Username, String coursetitle) throws SQLException {
 
         DatabaseReviews database=new DatabaseReviews("reviews.sqlite");
 
@@ -51,13 +51,13 @@ public class AddReviewController {
            try {
                if(validInputs.contains(rateString)){
                    int rating=Integer.parseInt(rateString);
-                   database.addReview(Username,Mnemonic,CourseNum,rating,new Timestamp(System.currentTimeMillis()),words);
-                   database.addMyReview(Username,Mnemonic,CourseNum,rating);
+                   database.addReview(Username,Mnemonic,CourseNum,coursetitle,rating,new Timestamp(System.currentTimeMillis()),words);
+                   database.addMyReview(Username,Mnemonic,CourseNum,coursetitle,rating);
                    database.commit();
                    database.disconnect();
                    inputComment.clear();
                    inputRate.clear();
-                   CourseReviewController courseReview=new CourseReviewController(stage,Username,Mnemonic,CourseNum);
+                   CourseReviewController courseReview=new CourseReviewController(stage,Username,Mnemonic,CourseNum, coursetitle);
                }
                else{
                    inputRate.clear();

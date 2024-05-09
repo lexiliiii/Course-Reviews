@@ -22,6 +22,7 @@ public class MyReviewController {
     public MyReviewController(Stage stage, String username) throws SQLException {
         stage.setTitle("My Review");
         Label myreview = new Label(username+"'s review");
+        myreview.setAlignment(Pos.TOP_CENTER);
 
         ListView<MyReview> list = new ListView<MyReview>();
         ObservableList<MyReview> items = viewableMyReview(username);
@@ -35,7 +36,7 @@ public class MyReviewController {
                 String mnemonic=selectedReview.getCourseMnemonic();
                 int coursenum=selectedReview.getCourseNumber();
                 try {
-                    CourseReviewController courseReview = new CourseReviewController(stage, username, selectedReview.getCourseMnemonic(), selectedReview.getCourseNumber());
+                    CourseReviewController courseReview = new CourseReviewController(stage, username, selectedReview.getCourseMnemonic(), selectedReview.getCourseNumber(),selectedReview.getCourseTitle());
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }

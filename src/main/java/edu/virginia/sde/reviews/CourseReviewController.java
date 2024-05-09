@@ -38,7 +38,7 @@ public class CourseReviewController {
         return temp;
     }
 
-    public CourseReviewController(Stage stage, String username, String mneomic, int coursenum) throws SQLException {
+    public CourseReviewController(Stage stage, String username, String mneomic, int coursenum, String coursetitle) throws SQLException {
         stage.setTitle("Course Review");
 //        DatabaseReviews database = new DatabaseReviews("reviews.sqlite");
 //        database.connect();
@@ -47,7 +47,7 @@ public class CourseReviewController {
         final ObservableListWrapper wrapper = new ObservableListWrapper(FXCollections.observableArrayList());
         ListView<Review> list = new ListView<>();
         try {
-            wrapper.setList(viewableReview(mneomic, coursenum)); // Populate the wrapper
+            wrapper.setList(viewableReview(mneomic, coursenum,coursetitle)); // Populate the wrapper
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -70,7 +70,7 @@ public class CourseReviewController {
         listScrollPane.setFitToHeight(true);
 
         Course course = getCourse(mneomic, coursenum);
-        double average = getAverage(mneomic, coursenum);
+        double average = getAverage(coursetitle);
         Label reviewLabel = new Label("Review for " + mneomic + coursenum + ": " + course.getCourseTitle());
         Label averagelable=new Label("Average Rating: "+average);
 
@@ -87,11 +87,11 @@ public class CourseReviewController {
         Button deleteButton = new Button("Delete");
         Label errorLabel = new Label();
 
-        addButton.setOnAction(event -> handleAddButton( inputRate, inputComment, username, mneomic, coursenum, list, errorLabel));
+        addButton.setOnAction(event -> handleAddButton( inputRate, inputComment, username, mneomic, coursenum, list, errorLabel,coursetitle));
         backButton.setOnAction(event -> handleBackButton(stage, username));
         deleteButton.setOnAction(event -> {
             try {
-                handleDeleteButton(stage,username,ownreviewWrapper[0],mneomic,coursenum,list,errorLabel);
+                handleDeleteButton(stage,username,ownreviewWrapper[0],mneomic,coursenum,list,errorLabel, coursetitle);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -138,20 +138,21 @@ public class CourseReviewController {
         stage.show();
     }
 
-    private void handleAddButton( TextField inputRate, TextArea inputComment, String username, String mneomic, int coursenum, ListView<Review> list, Label errorLabel) {
+    private void handleAddButton( TextField inputRate, TextArea inputComment, String username, String mneomic, int coursenum, ListView<Review> list, Label errorLabel, String coursetitle) {
         String rateString = inputRate.getText().trim();
         String words = inputComment.getText().trim();
         Set<String> validInputs = new HashSet<>(Arrays.asList("1", "2", "3", "4", "5"));
         if (validInputs.contains(rateString)) {
+            int rate=Integer.parseInt(rateString);
             try {
-                addReview(username, mneomic, coursenum, rateString, new Timestamp(System.currentTimeMillis()), words);
-                addMyReview(username,mneomic,coursenum,rateString);
+                addReview(username, mneomic, coursenum, coursetitle,rateString, new Timestamp(System.currentTimeMillis()), words);
+                addMyReview(username,mneomic,coursenum,coursetitle,rateString);
                 inputRate.clear();
                 inputComment.clear();
                 errorLabel.setText("Review added successfully.");
 
                 // Reload the review items to reflect new data
-                ObservableList<Review> updatedItems = viewableReview(mneomic, coursenum);
+                ObservableList<Review> updatedItems = viewableReview(mneomic,coursenum,coursetitle);
                 list.setItems(updatedItems); // Update the ListView with new items
                 list.refresh(); // Force the list to refresh its content
             } catch (SQLException e) {
@@ -173,17 +174,17 @@ public class CourseReviewController {
             throw new RuntimeException("Error navigating back to course search: " + e.getMessage(), e);
         }
     }
-    private void handleDeleteButton(Stage stage, String username,Review ownreview,String mneomic,int coursenum, ListView<Review> list,Label errorlabel) throws SQLException {
+    private void handleDeleteButton(Stage stage, String username,Review ownreview,String mneomic,int coursenum, ListView<Review> list,Label errorlabel,String coursetitle) throws SQLException {
         DatabaseReviews database = new DatabaseReviews("reviews.sqlite");
         database.connect();
         database.createTables();
         try {
             database.deleteReview(ownreview.getReviewID());
-            database.deleteMyReview(username, mneomic, coursenum);
+            database.deleteMyReview(username, ownreview.getCourseTitle());
             database.commit();
             database.disconnect();
             errorlabel.setText("Delete Review Successfully");
-            ObservableList<Review> updatedItems = viewableReview(mneomic, coursenum);
+            ObservableList<Review> updatedItems = viewableReview(username,coursenum,coursetitle);
             list.setItems(updatedItems); // Update the ListView with new items
             list.refresh(); // Force the list to refresh its content
         } catch (SQLException e) {
@@ -192,19 +193,19 @@ public class CourseReviewController {
     }
 
 
-    private ObservableList<Review> viewableReview(String mneomic,int coursenum) throws SQLException {
+    private ObservableList<Review> viewableReview(String mneomic,int coursenum, String courseTitle) throws SQLException {
         DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
         driver.connect();
         driver.createTables();
-        List<Review> allReviews = driver.getReviewsForCourse(mneomic,coursenum);
+        List<Review> allReviews = driver.getReviewsForCourse(courseTitle);
         driver.disconnect();
         return FXCollections.observableArrayList(allReviews);
     }
-    private double getAverage(String mneomic,int coursenum)throws SQLException {
+    private double getAverage(String coursetitle)throws SQLException {
         DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
         driver.connect();
         driver.createTables();
-        double average=driver.getAvgScore(mneomic, coursenum);
+        double average=driver.getAvgScore(coursetitle);
         driver.disconnect();
         return average;
 
@@ -225,7 +226,7 @@ public class CourseReviewController {
         }
     }
 
-    private void addReview(String username, String mneomic, int coursenum, String rating,Timestamp time,String words ) throws SQLException {
+    private void addReview(String username, String mneomic, int coursenum,String courseTitle, String rating,Timestamp time,String words ) throws SQLException {
         int rate = Integer.parseInt(rating);
         if (words.isEmpty()) {
             words = " ";
@@ -233,15 +234,15 @@ public class CourseReviewController {
         DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
         driver.connect();
         driver.createTables();
-        driver.addReview(username,mneomic,coursenum,rate,time,words);
+        driver.addReview( username,mneomic,coursenum, courseTitle,rate, time, words);
         driver.disconnect();
     }
-    private void addMyReview(String username, String mneomic, int coursenum, String rating) throws SQLException {
+    private void addMyReview(String username, String mneomic, int coursenum, String rating, String coursetitle) throws SQLException {
         int rate = Integer.parseInt(rating);
         DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
         driver.connect();
         driver.createTables();
-        driver.addMyReview(username,mneomic,coursenum,rate);
+        driver.addMyReview(username,mneomic,coursenum,coursetitle,rate);
         driver.disconnect();
     }
 }
