@@ -291,9 +291,9 @@ public class DatabaseReviews {
                         rs.getString("Username"),
                         rs.getString("CourseMnemonic"),
                         rs.getInt("CourseNumber"),
-                        rs.getString("CourseTitle"),
                         rs.getInt("Rating"),
                         rs.getTimestamp("Timestamp"),
+                        rs.getString("CourseTitle"),
                         rs.getString("Comment")
                 );
                 reviews.add(review);

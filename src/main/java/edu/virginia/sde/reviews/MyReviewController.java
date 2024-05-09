@@ -71,6 +71,7 @@ public class MyReviewController {
         driver.connect();
         driver.createTables();
         List<MyReview> allMyReviews = driver.getMyReviews(username);
+        driver.disconnect();
         return FXCollections.observableArrayList(allMyReviews);
     }
 

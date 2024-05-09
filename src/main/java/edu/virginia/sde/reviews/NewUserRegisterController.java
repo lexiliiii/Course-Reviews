@@ -6,6 +6,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
@@ -18,25 +20,38 @@ public class NewUserRegisterController {
     public NewUserRegisterController( Stage stage ){
         stage.setTitle( "New User Register" );
 
-        Label logInInstruction = new Label( "Please create your username and password below." );
+        Label logInInstruction = new Label( "Please create your username and password below" );
+        logInInstruction.setFont( Font.font("Times New Roman", FontWeight.BOLD, 25) );
+        logInInstruction.setStyle( "-fx-text-fill:white" );
 
         // Ask for Username
         Label userNameRequest = new Label( "Username:" );
         TextField input_userName = new TextField( );
         input_userName.setPrefWidth( 200 );
         input_userName.setMaxWidth( 200 );
+        userNameRequest.setFont( Font.font("Times New Roman", FontWeight.BOLD, 17) );
+        userNameRequest.setStyle("-fx-text-fill: white");
 
         // Ask for Password
         Label passwordRequest = new Label( "Password:" );
         TextField input_password = new TextField( );
         input_password.setPrefWidth( 200 );
         input_password.setMaxWidth( 200 );
+        passwordRequest.setFont( Font.font("Times New Roman", FontWeight.BOLD, 17) );
+        passwordRequest.setStyle("-fx-text-fill: white");
+
 
         // Buttons lead to next step
         Button registerButton = new Button( "Register" );
+        registerButton.setFont(new Font("Times New Roman", 14));
 
-        Button closeButton = new Button("Exit");
-        closeButton.setOnAction(event -> stage.close());
+        Button closeButton = new Button("Back to Log In");
+        closeButton.setFont( new Font( "Times New Roman", 14 ));
+        closeButton.setOnAction(event ->{
+            input_userName.clear();
+            input_password.clear();
+            LogInController login = new LogInController( stage );
+        });
 
         // Lay out the Username line horizontally
         HBox userNameBox = new HBox( 10 );
@@ -65,6 +80,10 @@ public class NewUserRegisterController {
 
         Label errorLabel = new Label();
         root.getChildren().add( errorLabel );
+        errorLabel.setFont( new Font( "Times New Roman", 14) );
+        errorLabel.setStyle( "-fx-text-fill:red" );
+
+        root.setStyle("-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #bdc3c7 0%, #7595af 100%);");
 
         registerButton.setOnAction(e -> {
             String username = input_userName.getText();
