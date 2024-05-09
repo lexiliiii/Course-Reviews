@@ -34,7 +34,11 @@ public class MyReviewController {
                 MyReview selectedReview = list.getSelectionModel().getSelectedItem();
                 String mnemonic=selectedReview.getCourseMnemonic();
                 int coursenum=selectedReview.getCourseNumber();
-                CourseReviewController courseReview = new CourseReviewController(stage, username, selectedReview.getCourseMnemonic(), selectedReview.getCourseNumber());
+                try {
+                    CourseReviewController courseReview = new CourseReviewController(stage, username, selectedReview.getCourseMnemonic(), selectedReview.getCourseNumber());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 
