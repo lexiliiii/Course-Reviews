@@ -422,58 +422,57 @@ public class DatabaseReviews {
         }
     }
 
-    public static void main(String[] args){
-        try {
-            DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
-            driver.connect();
-
-            if(driver != null){
-                driver.clearTables();
-            }
-
-            driver.createTables();
-
-//            List<User> allUser = driver.getAllUsers();
-//            for( int i = 0; i < allUser.size(); i++ ){
-//                System.out.println( allUser.get( i ) );
+//    public static void main(String[] args){
+//        try {
+//            DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
+//            driver.connect();
+//
+//            if(driver != null){
+//                driver.clearTables();
 //            }
-
-            driver.registerUser("lll", "12345678");
-            driver.registerUser("Jack", "11111111");
-            driver.registerUser("Helen", "22222222");
-            driver.registerUser("Kelvin", "33333333");
-            driver.registerUser("Mike", "44444444");
-            driver.registerUser("David", "55555555");
-
-            driver.addCourse("CS", 3140, "Software Development Essentials", 0.00);
-            driver.addCourse("CS", 3100, "Data Structures and Algo", 0.00);
-            driver.addCourse("ENWR", 1510, "Writing and Critical Inquiry", 0.00);
-            driver.addCourse("STAT", 3220, "Intro to Regression Analysis", 0.00);
-            driver.addCourse("EDIS", 2200, "Designing Art, Music, & Games", 0.00);
-            driver.addCourse("CS", 4501, "Introduction to Algorithmic Economics", 0.00);
-            driver.addCourse("CS", 4501, "Cybersecurity and Elections", 0.00);
-
-            driver.addMyReview("lll", "CS", 3100, "Data Structures and Algo",1);
-            driver.addReview("lll","CS", 3100, "Data Structures and Algo",1, new Timestamp(System.currentTimeMillis()),"");
-
-            driver.commit();
-
-//            List<User> temp = driver.getAllUsers();
-//            System.out.println(temp);
-
-//            List<Course> temp = driver.getAllCourses();
-//            System.out.println(temp);
-
-//            List<MyReview> temp = driver.getMyReviews("test1");
-//            System.out.println(temp);
-
-//            List<Review> temp1 = driver.getReviewsForCourse("SDE", 3140);
-//            System.out.println(temp1);
-
-            driver.disconnect();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//
+//            driver.createTables();
+//
+////            List<User> allUser = driver.getAllUsers();
+////            for( int i = 0; i < allUser.size(); i++ ){
+////                System.out.println( allUser.get( i ) );
+////            }
+//
+//            driver.registerUser("Jack", "11111111");
+//            driver.registerUser("Helen", "22222222");
+//            driver.registerUser("Kelvin", "33333333");
+//            driver.registerUser("Mike", "44444444");
+//            driver.registerUser("David", "55555555");
+//
+//            driver.addCourse("CS", 3140, "Software Development Essentials", 0.00);
+//            driver.addCourse("CS", 3100, "Data Structures and Algo", 0.00);
+//            driver.addCourse("ENWR", 1510, "Writing and Critical Inquiry", 0.00);
+//            driver.addCourse("STAT", 3220, "Intro to Regression Analysis", 0.00);
+//            driver.addCourse("EDIS", 2200, "Designing Art, Music, & Games", 0.00);
+//            driver.addCourse("CS", 4501, "Introduction to Algorithmic Economics", 0.00);
+//            driver.addCourse("CS", 4501, "Cybersecurity and Elections", 0.00);
+//
+//            driver.addMyReview("Jack", "CS", 3100, "Data Structures and Algo",1);
+//            driver.addReview("Jack","CS", 3100, "Data Structures and Algo",1, new Timestamp(System.currentTimeMillis()),"");
+//
+//            driver.commit();
+//
+////            List<User> temp = driver.getAllUsers();
+////            System.out.println(temp);
+//
+////            List<Course> temp = driver.getAllCourses();
+////            System.out.println(temp);
+//
+////            List<MyReview> temp = driver.getMyReviews("test1");
+////            System.out.println(temp);
+//
+////            List<Review> temp1 = driver.getReviewsForCourse("SDE", 3140);
+////            System.out.println(temp1);
+//
+//            driver.disconnect();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
