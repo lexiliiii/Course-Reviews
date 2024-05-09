@@ -146,6 +146,7 @@ public class DatabaseReviews {
             pstmt.setString(3, title);
             pstmt.setDouble(4, avgPoint);
             pstmt.executeUpdate();
+            commit();
 
         } catch (SQLException e) {
             rollback();
@@ -192,6 +193,7 @@ public class DatabaseReviews {
             pstmt.setInt(3, courseNumber);
             pstmt.setInt(4, rating);
             pstmt.executeUpdate();
+            commit();
 //            if (affectedRows > 0) {
 //                System.out.println("Review added successfully.");
 //            } else {
@@ -248,6 +250,7 @@ public class DatabaseReviews {
             pstmt.setString(6, comment);
 
             pstmt.executeUpdate();
+            commit();
 //            if (affectedRows > 0) {
 //                System.out.println("Review added successfully for course: " + courseMnemonic);
 //            } else {
@@ -274,6 +277,7 @@ public class DatabaseReviews {
             pstmt.setString(2, courseMnemonic);
             pstmt.setInt(3, courseNumber);
             pstmt.executeUpdate();
+            commit();
 
         } catch (SQLException e) {
             connection.rollback();
@@ -325,6 +329,7 @@ public class DatabaseReviews {
             pstmt.setString(2, newComment);
             pstmt.setInt(3, reviewID);
             pstmt.executeUpdate();
+            commit();
 
         } catch (SQLException e) {
             connection.rollback();
@@ -342,6 +347,7 @@ public class DatabaseReviews {
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, reviewID);
             pstmt.executeUpdate();
+            commit();
 
         } catch (SQLException e) {
             rollback();
@@ -363,6 +369,7 @@ public class DatabaseReviews {
             pstmt.setString(4, courseMnemonic);
             pstmt.setInt(5, courseNumber);
             pstmt.executeUpdate();
+            commit();
 
         } catch (SQLException e) {
             rollback();
@@ -382,6 +389,7 @@ public class DatabaseReviews {
             pstmt.setString(2, courseMnemonic);
             pstmt.setInt(3, courseNumber);
             pstmt.executeUpdate();
+            commit();
 
         } catch (SQLException e) {
             rollback();
