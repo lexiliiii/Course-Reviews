@@ -213,6 +213,7 @@ public class CourseReviewController {
             db.commit();  // Ensure changes are committed
             added = false;
             refreshListView();
+            db.disconnect();
             System.out.println("Review deleted successfully.");
         } catch (SQLException e) {
             System.err.println("Error deleting review: " + e.getMessage());
