@@ -403,10 +403,10 @@ public class DatabaseReviews {
 
         try (Statement stmt = connection.createStatement()) {
             connection.createStatement().execute("DELETE FROM MyReviews;");
-//            connection.createStatement().execute("DELETE FROM Reviews;");
-//            connection.createStatement().execute("DELETE FROM Courses;");
+            connection.createStatement().execute("DELETE FROM Reviews;");
+            connection.createStatement().execute("DELETE FROM Courses;");
             connection.createStatement().execute("DELETE FROM Users;");
-//            connection.createStatement().execute("DELETE FROM sqlite_sequence WHERE name = 'Reviews';");
+            connection.createStatement().execute("DELETE FROM sqlite_sequence WHERE name = 'Reviews';");
 
         } catch (SQLException e) {
             connection.rollback();
@@ -419,9 +419,9 @@ public class DatabaseReviews {
             DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
             driver.connect();
 
-//            if(driver != null){
-//                driver.clearTables();
-//            }
+            if(driver != null){
+                driver.clearTables();
+            }
 
             driver.createTables();
 
