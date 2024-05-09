@@ -80,7 +80,6 @@ public class EditReviewScene {
         root.add( addBox , 0, 0 );
 
 
-
         Scene scene = new Scene( root,1280, 780 );
         stage.setScene(scene);
         stage.show();

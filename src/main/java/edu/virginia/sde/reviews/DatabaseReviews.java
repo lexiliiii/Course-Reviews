@@ -293,8 +293,8 @@ public class DatabaseReviews {
                         rs.getInt("CourseNumber"),
                         rs.getInt("Rating"),
                         rs.getTimestamp("Timestamp"),
-                        rs.getString("CourseTitle"),
-                        rs.getString("Comment")
+                        rs.getString("Comment"),
+                        rs.getString("CourseTitle")
                 );
                 reviews.add(review);
             }
