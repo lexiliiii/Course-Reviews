@@ -16,14 +16,11 @@ import java.util.Set;
 import javax.swing.plaf.IconUIResource;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-
-public class AddReviewController {
-    public AddReviewController(Stage stage, String Mnemonic, int CourseNum,String Username) throws SQLException {
-
+public class EditReviewScene {
+    public EditReviewScene(Stage stage,Review review) throws SQLException {
         DatabaseReviews database=new DatabaseReviews("reviews.sqlite");
 
         database.connect();
-
         database.createTables();
 
         stage.setTitle("Add Review");
@@ -32,55 +29,58 @@ public class AddReviewController {
 
         Label myrating =new Label("Your Rating(1-5)");
         TextField inputRate =new TextField();
-        inputRate.setPrefWidth( 200 );
-        inputRate.setMaxWidth( 200 );
-
         String rateString =inputRate.getText();
         Set<String> validInputs = new HashSet<>(Arrays.asList("1", "2", "3", "4", "5"));
-
         Label comment =new Label("Your Comment(Optional)");
         TextField inputComment=new TextField();
-        inputComment.setPrefWidth( 300 );
-        inputComment.setMaxWidth( 500 );
-        String words=inputComment.getText();
+        String newcomment=inputComment.getText();
 
         Button addbutton=new Button();
         addbutton.setText("submit");
 
-       addbutton.setOnAction(event-> {
-           try {
-               if(validInputs.contains(rateString)){
-                   int rating=Integer.parseInt(rateString);
-                   database.addReview(Username,Mnemonic,CourseNum,rating,new Timestamp(System.currentTimeMillis()),words);
-                   database.addMyReview(Username,Mnemonic,CourseNum,rating);
-                   database.commit();
-                   database.disconnect();
-                   inputComment.clear();
-                   inputRate.clear();
-                   CourseReviewController courseReview=new CourseReviewController(stage,Username,Mnemonic,CourseNum);
-               }
-               else{
-                   inputRate.clear();
-                   inputComment.clear();
-                   errorLabel.setText("Invalid Rating");
-               }
+        addbutton.setOnAction(event-> {
+            try {
+                if(validInputs.contains(rateString)){
+                    int newrating=Integer.parseInt(rateString);
+                    if(newcomment.isEmpty()){
+                        database.updateReview(review.getReviewID(),newrating," ");
+                    }
+                    else{
+                        database.updateReview(review.getReviewID(),newrating,newcomment);
+                    }
+                    database.commit();
+                    database.disconnect();
+                    inputComment.clear();
+                    inputRate.clear();
+                    String Username=review.getUsername();
+                    String Mnemonic=review.getCourseMnemonic();
+                    int CourseNum=review.getCourseNumber();
+                    CourseReviewController courseReview=new CourseReviewController(stage,Username,Mnemonic,CourseNum);
 
-           } catch (SQLException e) {
-               throw new RuntimeException(e);
-           }
-       });
+                }
+
+                else{
+                    inputRate.clear();
+                    inputComment.clear();
+                    errorLabel.setText("Invalid Rating");
+                }
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
 
         Label errorLabel2 = new Label();
 
         HBox inputBox = new HBox( 10 );
         inputBox.getChildren().addAll(myrating, inputRate
-              );
+        );
         inputBox.setAlignment( Pos.CENTER );
 
         VBox addBox = new VBox( 10 );
         addBox.getChildren().addAll( myreview,errorLabel2,inputBox,errorLabel,comment,inputComment
-          );
+        );
         addBox.setAlignment( Pos.CENTER );
 
 
@@ -99,3 +99,4 @@ public class AddReviewController {
     }
 
 }
+
