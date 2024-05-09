@@ -34,7 +34,7 @@ public class Course {
         this.mnemonic = mnemonic;
         this.courseNumber = courseNumber;
         this.courseTitle = courseTitle;
-        this.avgRating = 0.00;
+        this.avgRating = avgRating;
     }
 
     public String getMnemonic() {
