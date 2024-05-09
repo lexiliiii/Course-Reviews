@@ -58,8 +58,7 @@ public class MyReview {
 
     @Override
     public String toString() {
-        return
-                "Course: " + courseMnemonic +
+        return "Course: " + courseMnemonic +
                 " " + courseNumber + "\n" +
                 "Rating: " + rating;
     }
