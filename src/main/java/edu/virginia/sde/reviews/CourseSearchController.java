@@ -12,6 +12,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
 
@@ -27,21 +29,31 @@ public class CourseSearchController {
         stage.setTitle( "Course Search" );
 
         Label searchLabel = new Label( "Course Search" );
+        searchLabel.setFont( Font.font("Times New Roman", FontWeight.BOLD, 20) );
+        searchLabel.setStyle( "-fx-text-fill:white" );
 
         Label mnemonicLabel = new Label( "Subject Mnemonic: " );
         TextField mnemonicInput = new TextField();
+        mnemonicLabel.setFont( Font.font("Times New Roman", FontWeight.BOLD, 15) );
+        mnemonicLabel.setStyle("-fx-text-fill: white");
         Label numberLabel = new Label( "Course Number: " );
         TextField numberInput = new TextField();
+        numberLabel.setFont( Font.font("Times New Roman", FontWeight.BOLD, 15) );
+        numberLabel.setStyle("-fx-text-fill: white");
         Label titleLabel = new Label( "Course Title: " );
         TextField titleInput = new TextField();
+        titleLabel.setFont( Font.font("Times New Roman", FontWeight.BOLD, 15) );
+        titleLabel.setStyle("-fx-text-fill: white");
         Label errorLabel = new Label();
+        errorLabel.setFont( new Font( "Times New Roman", 14) );
+        errorLabel.setStyle( "-fx-text-fill:red" );
 
         ListView<Course> list = new ListView<Course>();
         ObservableList<Course> items = viewableCourse();
         list.setItems( items );
         list.setPrefWidth( 800 );
 
-        // TODO: Set Action for clicking each row.
+
         list.setOnMouseClicked(event -> {
             Course selectedCourse = list.getSelectionModel().getSelectedItem();
             String selectedMnemonic = selectedCourse.getMnemonic();
@@ -56,6 +68,7 @@ public class CourseSearchController {
 
 
         Button searchButton = new Button( "Search" );
+        searchButton.setFont(new Font("Times New Roman", 13));
         searchButton.setOnAction(event -> {
             String mnem = mnemonicInput.getText();
             String num = numberInput.getText();
@@ -95,12 +108,14 @@ public class CourseSearchController {
 
 
         Button addButton = new Button( "Add Courses" );
+        addButton.setFont(new Font("Times New Roman", 13));
         addButton.setOnAction(event -> {
             CourseAdding add = new CourseAdding( stage, username );
         });
 
-        // TODO: Connect to My Reviews Scene.
+
         Button myReviewButton = new Button( "My Review" );
+        myReviewButton.setFont(new Font("Times New Roman", 13));
         myReviewButton.setOnAction(event -> {
             try {
                 MyReviewController review=new MyReviewController(stage,username);
@@ -111,11 +126,14 @@ public class CourseSearchController {
         });
 
         Button logOutButton = new Button( "Log Out" );
+        logOutButton.setFont(new Font("Times New Roman", 13));
         logOutButton.setOnAction(event -> {
             LogInController login = new LogInController( stage );
         });
 
         Label currentUser = new Label( "  Current User:  " + username );
+        currentUser.setFont( Font.font("Times New Roman", FontWeight.BOLD, 15) );
+        currentUser.setStyle( "-fx-text-fill:white" );
 
         HBox functionBox = new HBox( 10 );
         functionBox.getChildren().addAll( addButton, myReviewButton, logOutButton, currentUser );
@@ -131,6 +149,7 @@ public class CourseSearchController {
         root.add( list, 0, 1 );
         root.add( functionBox, 0, 2 );
 
+        root.setStyle("-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #bdc3c7 0%, #7595af 100%);");
 
         Scene scene = new Scene( root,1280, 780 );
         stage.setScene(scene);

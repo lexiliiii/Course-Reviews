@@ -9,6 +9,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 import java.sql.SQLException;
@@ -21,18 +23,29 @@ public class CourseAdding {
         stage.setTitle( "Course Adding" );
 
         Label addLabel = new Label( "Add Your Course" );
+        addLabel.setFont( Font.font("Times New Roman", FontWeight.BOLD, 20) );
+        addLabel.setStyle( "-fx-text-fill:white" );
 
         Label mnemonicLabel = new Label( "Subject Mnemonic: " );
         TextField mnemonicInput = new TextField();
+        mnemonicLabel.setFont( Font.font("Times New Roman", FontWeight.BOLD, 15) );
+        mnemonicLabel.setStyle("-fx-text-fill: white");
         Label numberLabel = new Label( "Course Number: " );
         TextField numberInput = new TextField();
+        numberLabel.setFont( Font.font("Times New Roman", FontWeight.BOLD, 15) );
+        numberLabel.setStyle("-fx-text-fill: white");
         Label titleLabel = new Label( "Course Title: " );
         TextField titleInput = new TextField();
+        titleLabel.setFont( Font.font("Times New Roman", FontWeight.BOLD, 15) );
+        titleLabel.setStyle("-fx-text-fill: white");
 
         Label errorLabel = new Label();
+        errorLabel.setFont( new Font( "Times New Roman", 14) );
+        errorLabel.setStyle( "-fx-text-fill:red" );
 
 
         Button addButton = new Button( "Add Course" );
+        addButton.setFont(new Font("Times New Roman", 13));
         addButton.setOnAction(event -> {
             String mnem = mnemonicInput.getText();
             String number = numberInput.getText();
@@ -65,6 +78,7 @@ public class CourseAdding {
 //            stage.close();
         });
         Button exitButton = new Button( "Back to Course Search" );
+        exitButton.setFont(new Font("Times New Roman", 13));
         exitButton.setOnAction(event -> {
             try {
                 CourseSearchController courseSearchController = new CourseSearchController( stage, username );
@@ -96,6 +110,7 @@ public class CourseAdding {
         root.setAlignment( Pos.CENTER );
         root.add( addBox , 0, 0 );
 
+        root.setStyle("-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #bdc3c7 0%, #7595af 100%);");
 
         Scene scene = new Scene( root,1280, 780 );
         stage.setScene(scene);
