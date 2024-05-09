@@ -55,7 +55,8 @@ public class EditReviewScene {
                     String Username=review.getUsername();
                     String Mnemonic=review.getCourseMnemonic();
                     int CourseNum=review.getCourseNumber();
-                    CourseReviewController courseReview=new CourseReviewController(stage,Username,Mnemonic,CourseNum);
+                    String Title = review.getCourseTitle();
+                    CourseReviewController courseReview=new CourseReviewController(stage,Username,Mnemonic,CourseNum, Title);
 
                 }
 
