@@ -130,7 +130,7 @@ boolean added;
         if (validInputs.contains(rateString)) {
             try {
                 addReview(username, mneomic, coursenum, coursetitle,rateString, new Timestamp(System.currentTimeMillis()), words);
-                addMyReview(username,mneomic,coursenum,coursetitle,rateString);
+                addMyReview( username,mneomic,coursenum, rateString, coursetitle );
                 inputRate.clear();
                 inputComment.clear();
                 errorLabel.setText("Review added successfully.");
@@ -170,6 +170,7 @@ boolean added;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        database.disconnect();
     }
 
 
