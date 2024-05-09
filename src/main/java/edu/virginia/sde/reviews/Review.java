@@ -65,7 +65,7 @@ public class Review {
         "Time" +" "+
                 timestamp +
                 "\n" + "\n"+
-                "comment: "+comment;
+                "Comment: "+comment;
     }
 }
 
