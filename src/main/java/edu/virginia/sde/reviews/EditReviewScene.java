@@ -41,7 +41,7 @@ public class EditReviewScene {
             if(validInputs.contains(rateString)) {
                 try {
                     if (newcomment.isEmpty()) {
-                        updateReview(review.getReviewID(), rateString, " ", time);
+                        updateReview(review.getReviewID(), rateString, " ", time );
                     } else {
                         updateReview(review.getReviewID(), rateString, newcomment, time );
                     }
@@ -95,7 +95,7 @@ public class EditReviewScene {
         DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
         driver.connect();
         driver.createTables();
-        driver.updateReview(reviewID,score, time, comments );
+        driver.updateReview( reviewID,score, time, comments );
         driver.disconnect();
     }
     private void updateMyReview(Review review,String newrating,String comments ) throws SQLException {
@@ -109,6 +109,7 @@ public class EditReviewScene {
         String username=review.getUsername();
         String mneomic=review.getCourseMnemonic();
         int coursenum=review.getCourseNumber();
+        String title = review.getCourseTitle();
         driver.updateMyReview(username,review.getCourseTitle(),score );
         driver.disconnect();
     }

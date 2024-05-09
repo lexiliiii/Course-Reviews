@@ -67,9 +67,9 @@ boolean added;
         listScrollPane.setFitToHeight(true);
 
         Course course = getCourse(mneomic, coursenum);
-        double average = getAverage(coursetitle);
+        String average = getAverage(coursetitle);
         Label reviewLabel = new Label("Review for " + mneomic + coursenum + ": " + course.getCourseTitle());
-        Label averagelable=new Label("Average Rating: "+average);
+        Label averagelable=new Label("Average Rating: " + average);
 
 //        TextField inputRate = new TextField();
 //        inputRate.setPrefWidth(200);
@@ -184,11 +184,11 @@ boolean added;
         driver.disconnect();
         return FXCollections.observableArrayList(allReviews);
     }
-    private double getAverage(String coursetitle)throws SQLException {
+    private String getAverage(String coursetitle)throws SQLException {
         DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
         driver.connect();
         driver.createTables();
-        double average=driver.getAvgScore(coursetitle);
+        String average=driver.getAvgScore(coursetitle);
         driver.disconnect();
         return average;
 

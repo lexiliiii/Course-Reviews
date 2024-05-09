@@ -258,7 +258,8 @@ public class DatabaseReviews {
             throw new IllegalStateException("Connection is closed right now.");
         }
 
-        double newAverage = getAvgScore(courseTitle);
+        String avg = getAvgScore( courseTitle );
+        double newAverage = Double.parseDouble( avg );
 
         String sql = "UPDATE Courses SET AverageReviewRating = ? WHERE CourseTitle = ?;";
 
@@ -359,6 +360,7 @@ public class DatabaseReviews {
             pstmt.setString(3, courseTitle);
             pstmt.executeUpdate();
             commit();
+            updateAverageRating( courseTitle );
 
         } catch (SQLException e) {
             connection.rollback();
@@ -386,16 +388,18 @@ public class DatabaseReviews {
     }
 
 
-    public double getAvgScore(String courseTitle) throws SQLException {
+    public String getAvgScore(String courseTitle) throws SQLException {
         if (connection.isClosed()) {
             throw new IllegalStateException("Connection is closed right now.");
         }
         List<Review> allReviews = getReviewsForCourse(courseTitle);
-        double total = 0.0;
+        double total = 0.00;
         for(int i = 0; i < allReviews.size(); i ++){
             total += allReviews.get(i).getRating();
         }
-        return total/allReviews.size();
+        Double avgRating = total/allReviews.size();
+        String formattedRate = String.format( "%.2f", avgRating );
+        return formattedRate;
     }
 
     public void clearTables() throws SQLException {
