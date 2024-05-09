@@ -10,6 +10,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+
+import java.sql.Time;
 import java.util.HashSet;
 import java.util.Arrays;
 import java.util.Set;
@@ -34,13 +36,14 @@ public class EditReviewScene {
         addbutton.setOnAction(event-> {
             String rateString = inputRate.getText();
             String newcomment = inputComment.getText();
+            Timestamp time = new Timestamp( System.currentTimeMillis() );
             Set<String> validInputs = new HashSet<>(Arrays.asList("1", "2", "3", "4", "5"));
             if(validInputs.contains(rateString)) {
                 try {
                     if (newcomment.isEmpty()) {
-                        updateReview(review.getReviewID(), rateString, " ");
+                        updateReview(review.getReviewID(), rateString, " ", time);
                     } else {
-                        updateReview(review.getReviewID(), rateString, newcomment);
+                        updateReview(review.getReviewID(), rateString, newcomment, time );
                     }
                     updateMyReview(review, rateString, newcomment);
                     inputComment.clear();
@@ -84,7 +87,7 @@ public class EditReviewScene {
         stage.setScene(scene);
         stage.show();
     }
-    private void updateReview(int reviewID,String newrating,String comments ) throws SQLException {
+    private void updateReview(int reviewID,String newrating,String comments, Timestamp time ) throws SQLException {
         int score=Integer.parseInt(newrating);
         if (comments.isEmpty()) {
             comments = " ";
@@ -92,7 +95,7 @@ public class EditReviewScene {
         DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
         driver.connect();
         driver.createTables();
-        driver.updateReview(reviewID,score,comments);
+        driver.updateReview(reviewID,score, time, comments );
         driver.disconnect();
     }
     private void updateMyReview(Review review,String newrating,String comments ) throws SQLException {
