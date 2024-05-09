@@ -22,10 +22,9 @@ public class DatabaseReviews {
         if (connection != null && !connection.isClosed()) {
             throw new IllegalStateException("The connection is already opened");
         }
+
         connection = DriverManager.getConnection("jdbc:sqlite:" + sqliteFilename);
-        //the next line enables foreign key enforcement - do not delete/comment out
         connection.createStatement().execute("PRAGMA foreign_keys = ON");
-        //the next line disables auto-commit - do not delete/comment out
         connection.setAutoCommit(false);
     }
 
@@ -57,7 +56,7 @@ public class DatabaseReviews {
                         "CourseNumber INTEGER NOT NULL, " +
                         "CourseTitle TEXT NOT NULL, " +
                         "AverageReviewRating DOUBLE, " +
-                        "PRIMARY KEY (CourseMnemonic, CourseNumber));";
+                        "PRIMARY KEY (CourseTitle));";
 
         String Reviews =
                 "CREATE TABLE IF NOT EXISTS Reviews (" +
@@ -65,22 +64,23 @@ public class DatabaseReviews {
                         "Username TEXT NOT NULL, " +
                         "CourseMnemonic TEXT NOT NULL, " +
                         "CourseNumber INTEGER NOT NULL, " +
+                        "CourseTitle TEXT NOT NULL, " +
                         "Rating INTEGER NOT NULL CHECK (Rating BETWEEN 1 AND 5), " +
                         "Timestamp TIMESTAMP NOT NULL, " +
                         "Comment TEXT, " +
                         "FOREIGN KEY (Username) REFERENCES Users(Username) ON DELETE CASCADE, " +
-                        "FOREIGN KEY (CourseMnemonic, CourseNumber) REFERENCES Courses(CourseMnemonic, CourseNumber) ON DELETE CASCADE);";
-
+                        "FOREIGN KEY (CourseMnemonic, CourseNumber, CourseTitle) REFERENCES Courses(CourseMnemonic, CourseNumber, CourseTitle) ON DELETE CASCADE);";
 
         String MyReviews =
                 "CREATE TABLE IF NOT EXISTS MyReviews (" +
                         "Username TEXT NOT NULL, " +
                         "CourseMnemonic TEXT NOT NULL, " +
                         "CourseNumber INTEGER NOT NULL, " +
+                        "CourseTitle TEXT NOT NULL, " +
                         "Rating INTEGER NOT NULL CHECK (Rating BETWEEN 1 AND 5), " +
-                        "PRIMARY KEY (Username, CourseMnemonic, CourseNumber), " +
+                        "PRIMARY KEY (CourseTitle), " +
                         "FOREIGN KEY (Username) REFERENCES Users(Username) ON DELETE CASCADE, " +
-                        "FOREIGN KEY (CourseMnemonic, CourseNumber) REFERENCES Courses(CourseMnemonic, CourseNumber) ON DELETE CASCADE);";
+                        "FOREIGN KEY (CourseMnemonic, CourseNumber, CourseTitle) REFERENCES Courses(CourseMnemonic, CourseNumber, CourseTitle) ON DELETE CASCADE);";
 
         try (Statement statement = connection.createStatement()) {
             statement.execute(Users);
@@ -102,7 +102,7 @@ public class DatabaseReviews {
             commit();
 
         } catch (SQLException e) {
-            rollback();
+            connection.rollback();
             throw new SQLException("Error adding users: " + e.getMessage());
         }
     }
@@ -125,6 +125,7 @@ public class DatabaseReviews {
             }
 
         } catch (SQLException e) {
+            connection.rollback();
             throw new SQLException("Error reading from Users table: " + e.getMessage());
         }
 
@@ -143,7 +144,7 @@ public class DatabaseReviews {
             commit();
 
         } catch (SQLException e) {
-            rollback();
+            connection.rollback();
             throw new SQLException("Error adding courses: " + e.getMessage());
         }
     }
@@ -168,31 +169,28 @@ public class DatabaseReviews {
             }
 
         } catch (SQLException e) {
+            connection.rollback();
             throw new SQLException("Error reading from Courses table: " + e.getMessage());
         }
 
         return collection;
     }
 
-    public void addMyReview(String username, String courseMnemonic, int courseNumber, int rating) throws SQLException {
+    public void addMyReview(String username, String courseMnemonic, int courseNumber, String courseTitle, int rating) throws SQLException {
         if (connection.isClosed()) {
             throw new IllegalStateException("Connection is closed right now.");
         }
 
-        String sql = "INSERT INTO MyReviews (Username, CourseMnemonic, CourseNumber, Rating) VALUES (?, ?, ?, ?);";
+        String sql = "INSERT INTO MyReviews (Username, CourseMnemonic, CourseNumber, CourseTitle, Rating) VALUES (?, ?, ?, ?, ?);";
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, username);
             pstmt.setString(2, courseMnemonic);
             pstmt.setInt(3, courseNumber);
-            pstmt.setInt(4, rating);
+            pstmt.setString(4, courseTitle);
+            pstmt.setInt(5, rating);
             pstmt.executeUpdate();
-            commit();
-//            if (affectedRows > 0) {
-//                System.out.println("Review added successfully.");
-//            } else {
-//                throw new SQLException("Adding review failed, no rows affected.");
-//            }
+
 
         } catch (SQLException e) {
             connection.rollback();
@@ -205,7 +203,7 @@ public class DatabaseReviews {
             throw new IllegalStateException("Connection is closed right now.");
         }
 
-        String sql = "SELECT Username, CourseMnemonic, CourseNumber, Rating FROM MyReviews WHERE Username = ?";
+        String sql = "SELECT Username, CourseMnemonic, CourseNumber, CourseTitle, Rating FROM MyReviews WHERE Username = ?";
         List<MyReview> reviews = new ArrayList<>();
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -217,60 +215,54 @@ public class DatabaseReviews {
                         rs.getString("Username"),
                         rs.getString("CourseMnemonic"),
                         rs.getInt("CourseNumber"),
+                        rs.getString("CourseTitle"),
                         rs.getInt("Rating")
                 );
                 reviews.add(myreview);
             }
 
         } catch (SQLException e) {
+            connection.rollback();
             throw new SQLException("Error reading from MyReviews table: " + e.getMessage());
         }
         return reviews;
     }
 
-    public void addReview(String username,String courseMnemonic, int courseNumber, int rating, Timestamp timestamp, String comment) throws SQLException {
+    public void addReview(String username, String courseMnemonic, int courseNumber, String courseTitle, int rating, Timestamp timestamp, String comment) throws SQLException {
         if (connection.isClosed()) {
             throw new IllegalStateException("Connection is closed right now.");
         }
 
-        String sql = "INSERT INTO Reviews (Username, CourseMnemonic, CourseNumber, Rating, Timestamp, Comment) VALUES (?, ?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO Reviews (Username, CourseMnemonic, CourseNumber, CourseTitle, Rating, Timestamp, Comment) VALUES (?, ?, ?, ?, ?, ?, ?);";
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, username);
             pstmt.setString(2, courseMnemonic);
             pstmt.setInt(3, courseNumber);
-            pstmt.setInt(4, rating);
-            pstmt.setTimestamp(5, timestamp);
-            pstmt.setString(6, comment);
-
+            pstmt.setString(4, courseTitle);
+            pstmt.setInt(5, rating);
+            pstmt.setTimestamp(6, timestamp);
+            pstmt.setString(7, comment);
             pstmt.executeUpdate();
-            commit();
-//            if (affectedRows > 0) {
-//                System.out.println("Review added successfully for course: " + courseMnemonic);
-//            } else {
-//                throw new SQLException("Adding review failed, no rows affected.");
-//            }
 
         } catch (SQLException e) {
             connection.rollback();
-            e.printStackTrace();
             throw new SQLException("Error adding Reviews: " + e.getMessage());
         }
     }
 
-    public void updateAverageRating(String courseMnemonic, int courseNumber) throws SQLException {
+    public void updateAverageRating(String courseTitle) throws SQLException {
         if (connection.isClosed()) {
             throw new IllegalStateException("Connection is closed right now.");
         }
 
-        double newAverage = getAvgScore(courseMnemonic, courseNumber);
+        double newAverage = getAvgScore(courseTitle);
 
-        String sql = "UPDATE Courses SET AverageReviewRating = ? WHERE CourseMnemonic = ? AND CourseNumber = ?;";
+        String sql = "UPDATE Courses SET AverageReviewRating = ? WHERE CourseTitle = ?;";
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setDouble(1, newAverage);
-            pstmt.setString(2, courseMnemonic);
-            pstmt.setInt(3, courseNumber);
+            pstmt.setString(2, courseTitle);
             pstmt.executeUpdate();
             commit();
 
@@ -280,18 +272,16 @@ public class DatabaseReviews {
         }
     }
 
-
-    public List<Review> getReviewsForCourse(String courseMnemonic, int courseNumber) throws SQLException {
+    public List<Review> getReviewsForCourse(String courseTitle) throws SQLException {
         if (connection.isClosed()) {
             throw new IllegalStateException("Connection is closed right now.");
         }
 
-        String sql = "SELECT * FROM Reviews WHERE CourseMnemonic = ? AND CourseNumber = ?";
+        String sql = "SELECT * FROM Reviews WHERE CourseTitle = ?";
         List<Review> reviews = new ArrayList<>();
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, courseMnemonic);
-            pstmt.setInt(2, courseNumber);
+            pstmt.setString(1, courseTitle);
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
@@ -300,6 +290,7 @@ public class DatabaseReviews {
                         rs.getString("Username"),
                         rs.getString("CourseMnemonic"),
                         rs.getInt("CourseNumber"),
+                        rs.getString("CourseTitle"),
                         rs.getInt("Rating"),
                         rs.getTimestamp("Timestamp"),
                         rs.getString("Comment")
@@ -307,10 +298,12 @@ public class DatabaseReviews {
                 reviews.add(review);
             }
         } catch (SQLException e) {
-            throw new SQLException("Error retrieving reviews for courses: " + e.getMessage());
+            connection.rollback();
+            throw new SQLException("Error retrieving reviews for course: " + e.getMessage());
         }
         return reviews;
     }
+
 
     public void updateReview(int reviewID, int newRating, String newComment) throws SQLException {
         if (connection.isClosed()) {
@@ -350,54 +343,51 @@ public class DatabaseReviews {
         }
     }
 
-    public void updateMyReview(String username, String courseMnemonic, int courseNumber, int newRating, String newComment) throws SQLException {
+    public void updateMyReview(String username, String courseTitle, int newRating) throws SQLException {
         if (connection.isClosed()) {
             throw new IllegalStateException("Connection is closed right now.");
         }
 
-        String sql = "UPDATE MyReviews SET Rating = ?, Comment = ? WHERE Username = ? AND CourseMnemonic = ? AND CourseNumber = ?;";
+        String sql = "UPDATE MyReviews SET Rating = ? WHERE Username = ? AND CourseTitle = ?;";
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, newRating);
-            pstmt.setString(2, newComment);
-            pstmt.setString(3, username);
-            pstmt.setString(4, courseMnemonic);
-            pstmt.setInt(5, courseNumber);
+            pstmt.setString(2, username);
+            pstmt.setString(3, courseTitle);
             pstmt.executeUpdate();
             commit();
 
         } catch (SQLException e) {
-            rollback();
+            connection.rollback();
             throw new SQLException("Error updating my review: " + e.getMessage());
         }
     }
 
-    public void deleteMyReview(String username, String courseMnemonic, int courseNumber) throws SQLException {
+    public void deleteMyReview(String username, String courseTitle) throws SQLException {
         if (connection.isClosed()) {
             throw new IllegalStateException("Connection is closed right now.");
         }
 
-        String sql = "DELETE FROM MyReviews WHERE Username = ? AND CourseMnemonic = ? AND CourseNumber = ?;";
+        String sql = "DELETE FROM MyReviews WHERE Username = ? AND CourseTitle = ?;";
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, username);
-            pstmt.setString(2, courseMnemonic);
-            pstmt.setInt(3, courseNumber);
+            pstmt.setString(2, courseTitle);
             pstmt.executeUpdate();
             commit();
 
         } catch (SQLException e) {
-            rollback();
+            connection.rollback();
             throw new SQLException("Error deleting my review: " + e.getMessage());
         }
     }
 
 
-    public double getAvgScore(String courseMnemonic, int courseNumber) throws SQLException {
+    public double getAvgScore(String courseTitle) throws SQLException {
         if (connection.isClosed()) {
             throw new IllegalStateException("Connection is closed right now.");
         }
-        List<Review> allReviews = getReviewsForCourse(courseMnemonic, courseNumber);
+        List<Review> allReviews = getReviewsForCourse(courseTitle);
         double total = 0.0;
         for(int i = 0; i < allReviews.size(); i ++){
             total += allReviews.get(i).getRating();
@@ -409,11 +399,6 @@ public class DatabaseReviews {
         if (connection.isClosed()) {
             throw new IllegalStateException("Connection is closed right now.");
         }
-
-//        String deleteRoutes = "DELETE FROM Routes;";
-//        String deleteStops = "DELETE FROM Stops;";
-//        String deleteBusLines = "DELETE FROM BusLines;";
-//        String resetAutoincrement = "DELETE FROM sqlite_sequence WHERE name = 'Routes';";
 
         try (Statement stmt = connection.createStatement()) {
             connection.createStatement().execute("DELETE FROM MyReviews;");
@@ -431,8 +416,11 @@ public class DatabaseReviews {
 //    public static void main(String[] args){
 //        try {
 //            DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
-//
 //            driver.connect();
+//
+//            if(driver != null){
+//                driver.clearTables();
+//            }
 //
 //            driver.createTables();
 //
@@ -441,24 +429,27 @@ public class DatabaseReviews {
 ////                System.out.println( allUser.get( i ) );
 ////            }
 //
-//            driver.registerUser("lll", "12345678");
-//            driver.registerUser("Jack", "11111111");
-//            driver.registerUser("Helen", "22222222");
-//            driver.registerUser("Kelvin", "33333333");
-//            driver.registerUser("Lady Gaga", "44444444");
-//            driver.registerUser("Nicki Minaj", "55555555");
+////            driver.registerUser("lll", "12345678");
+////            driver.registerUser("Jack", "11111111");
+////            driver.registerUser("Helen", "22222222");
+////            driver.registerUser("Kelvin", "33333333");
+////            driver.registerUser("Mike", "44444444");
+////            driver.registerUser("David", "55555555");
 ////
-//            driver.addCourse("CS", 3140, "Software Development Essentials", 0.00);
-//            driver.addCourse("CS", 3100, "Data Structures and Algo", 0.00);
-//            driver.addCourse("ENWR", 1510, "Writing and Critical Inquiry", 0.00);
-//            driver.addCourse("STAT", 3220, "Intro to Regression Analysis", 0.00);
-//            driver.addCourse("EDIS", 2200, "Designing Art, Music, & Games", 0.00);
+////            driver.addCourse("CS", 3140, "Software Development Essentials", 0.00);
+////            driver.addCourse("CS", 3100, "Data Structures and Algo", 0.00);
+////            driver.addCourse("ENWR", 1510, "Writing and Critical Inquiry", 0.00);
+////            driver.addCourse("STAT", 3220, "Intro to Regression Analysis", 0.00);
+////            driver.addCourse("EDIS", 2200, "Designing Art, Music, & Games", 0.00);
+////            driver.addCourse("CS", 4501, "Introduction to Algorithmic Economics", 0.00);
+////            driver.addCourse("CS", 4501, "Cybersecurity and Elections", 0.00);
 //
-//            driver.addMyReview("lll", "CS", 3100, 1);
-//            driver.addReview("lll","CS", 3100, 1, new Timestamp(System.currentTimeMillis()),"shit");
-////            driver.clearTables();
-////
+//
+//
 //            driver.commit();
+//
+////            driver.addMyReview("lll", "CS", 3100, 1);
+////            driver.addReview("lll","CS", 3100, 1, new Timestamp(System.currentTimeMillis()),"shit");
 //
 ////            List<User> temp = driver.getAllUsers();
 ////            System.out.println(temp);
