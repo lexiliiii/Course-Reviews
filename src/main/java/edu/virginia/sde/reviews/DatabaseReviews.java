@@ -56,7 +56,7 @@ public class DatabaseReviews {
                         "CourseNumber INTEGER NOT NULL, " +
                         "CourseTitle TEXT NOT NULL, " +
                         "AverageReviewRating DOUBLE, " +
-                        "PRIMARY KEY (CourseTitle));";
+                        "PRIMARY KEY (CourseMnemonic, CourseNumber, CourseTitle));";
 
         String Reviews =
                 "CREATE TABLE IF NOT EXISTS Reviews (" +
@@ -78,7 +78,7 @@ public class DatabaseReviews {
                         "CourseNumber INTEGER NOT NULL, " +
                         "CourseTitle TEXT NOT NULL, " +
                         "Rating INTEGER NOT NULL CHECK (Rating BETWEEN 1 AND 5), " +
-                        "PRIMARY KEY (CourseTitle), " +
+                        "PRIMARY KEY (Username, CourseMnemonic, CourseNumber, CourseTitle), " +
                         "FOREIGN KEY (Username) REFERENCES Users(Username) ON DELETE CASCADE, " +
                         "FOREIGN KEY (CourseMnemonic, CourseNumber, CourseTitle) REFERENCES Courses(CourseMnemonic, CourseNumber, CourseTitle) ON DELETE CASCADE);";
 
@@ -91,6 +91,7 @@ public class DatabaseReviews {
             throw new SQLException("Error creating tables: " + e.getMessage());
         }
     }
+
 
     public void registerUser(String username, String password) throws SQLException {
         String sql = "INSERT INTO Users (Username, Password) VALUES (?, ?)";
@@ -402,10 +403,10 @@ public class DatabaseReviews {
 
         try (Statement stmt = connection.createStatement()) {
             connection.createStatement().execute("DELETE FROM MyReviews;");
-            connection.createStatement().execute("DELETE FROM Reviews;");
-            connection.createStatement().execute("DELETE FROM Courses;");
+//            connection.createStatement().execute("DELETE FROM Reviews;");
+//            connection.createStatement().execute("DELETE FROM Courses;");
             connection.createStatement().execute("DELETE FROM Users;");
-            connection.createStatement().execute("DELETE FROM sqlite_sequence WHERE name = 'Reviews';");
+//            connection.createStatement().execute("DELETE FROM sqlite_sequence WHERE name = 'Reviews';");
 
         } catch (SQLException e) {
             connection.rollback();
@@ -413,60 +414,58 @@ public class DatabaseReviews {
         }
     }
 
-//    public static void main(String[] args){
-//        try {
-//            DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
-//            driver.connect();
-//
+    public static void main(String[] args){
+        try {
+            DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
+            driver.connect();
+
 //            if(driver != null){
 //                driver.clearTables();
 //            }
-//
-//            driver.createTables();
-//
-////            List<User> allUser = driver.getAllUsers();
-////            for( int i = 0; i < allUser.size(); i++ ){
-////                System.out.println( allUser.get( i ) );
-////            }
-//
-////            driver.registerUser("lll", "12345678");
-////            driver.registerUser("Jack", "11111111");
-////            driver.registerUser("Helen", "22222222");
-////            driver.registerUser("Kelvin", "33333333");
-////            driver.registerUser("Mike", "44444444");
-////            driver.registerUser("David", "55555555");
-////
-////            driver.addCourse("CS", 3140, "Software Development Essentials", 0.00);
-////            driver.addCourse("CS", 3100, "Data Structures and Algo", 0.00);
-////            driver.addCourse("ENWR", 1510, "Writing and Critical Inquiry", 0.00);
-////            driver.addCourse("STAT", 3220, "Intro to Regression Analysis", 0.00);
-////            driver.addCourse("EDIS", 2200, "Designing Art, Music, & Games", 0.00);
-////            driver.addCourse("CS", 4501, "Introduction to Algorithmic Economics", 0.00);
-////            driver.addCourse("CS", 4501, "Cybersecurity and Elections", 0.00);
-//
-//
-//
-//            driver.commit();
-//
-////            driver.addMyReview("lll", "CS", 3100, 1);
-////            driver.addReview("lll","CS", 3100, 1, new Timestamp(System.currentTimeMillis()),"shit");
-//
-////            List<User> temp = driver.getAllUsers();
-////            System.out.println(temp);
-//
-////            List<Course> temp = driver.getAllCourses();
-////            System.out.println(temp);
-//
-////            List<MyReview> temp = driver.getMyReviews("test1");
-////            System.out.println(temp);
-//
-////            List<Review> temp1 = driver.getReviewsForCourse("SDE", 3140);
-////            System.out.println(temp1);
-//
-//            driver.disconnect();
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+
+            driver.createTables();
+
+//            List<User> allUser = driver.getAllUsers();
+//            for( int i = 0; i < allUser.size(); i++ ){
+//                System.out.println( allUser.get( i ) );
+//            }
+
+            driver.registerUser("lll", "12345678");
+            driver.registerUser("Jack", "11111111");
+            driver.registerUser("Helen", "22222222");
+            driver.registerUser("Kelvin", "33333333");
+            driver.registerUser("Mike", "44444444");
+            driver.registerUser("David", "55555555");
+
+            driver.addCourse("CS", 3140, "Software Development Essentials", 0.00);
+            driver.addCourse("CS", 3100, "Data Structures and Algo", 0.00);
+            driver.addCourse("ENWR", 1510, "Writing and Critical Inquiry", 0.00);
+            driver.addCourse("STAT", 3220, "Intro to Regression Analysis", 0.00);
+            driver.addCourse("EDIS", 2200, "Designing Art, Music, & Games", 0.00);
+            driver.addCourse("CS", 4501, "Introduction to Algorithmic Economics", 0.00);
+            driver.addCourse("CS", 4501, "Cybersecurity and Elections", 0.00);
+
+            driver.addMyReview("lll", "CS", 3100, "Data Structures and Algo",1);
+            driver.addReview("lll","CS", 3100, "Data Structures and Algo",1, new Timestamp(System.currentTimeMillis()),"");
+
+            driver.commit();
+
+//            List<User> temp = driver.getAllUsers();
+//            System.out.println(temp);
+
+//            List<Course> temp = driver.getAllCourses();
+//            System.out.println(temp);
+
+//            List<MyReview> temp = driver.getMyReviews("test1");
+//            System.out.println(temp);
+
+//            List<Review> temp1 = driver.getReviewsForCourse("SDE", 3140);
+//            System.out.println(temp1);
+
+            driver.disconnect();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
