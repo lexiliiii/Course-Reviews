@@ -142,40 +142,38 @@ public class CourseReviewController {
     private void addUserReviewInputControls() {
         TextField inputRate = new TextField();
         TextArea inputComment = new TextArea();
+        inputComment.setWrapText(true);  // Ensure text wraps to the next line
         Button addButton = new Button("Add");
         addButton.setFont(new Font("Times New Roman", 13));
 
-        addButton.setOnAction(event ->{
-            if( inputRate.getText().equals( "1" )
-                    || inputRate.getText().equals( "2" )
-                    || inputRate.getText().equals( "3" )
-                    || inputRate.getText().equals( "4" )
-                    || inputRate.getText().equals( "5" )
-            ){
+        addButton.setOnAction(event -> {
+            if (isValidRating(inputRate.getText())) {
                 addReview(inputRate.getText(), inputComment.getText());
                 try {
-                    CourseReviewController courseReviewController = new CourseReviewController( stage, username, mnemonic, courseNum, courseTitle );
+                    CourseReviewController courseReviewController = new CourseReviewController(stage, username, mnemonic, courseNum, courseTitle);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
+            } else {
+                errorLabel.setText("Your rating should be an integer between 1 - 5!");
+                errorLabel.setFont(new Font("Times New Roman", 14));
+                errorLabel.setStyle("-fx-text-fill:red");
             }
-            else {
-                errorLabel.setText( "Your rating should be an integer between 1 - 5! " );
-                errorLabel.setFont( new Font( "Times New Roman", 14) );
-                errorLabel.setStyle( "-fx-text-fill:red" );
-            }
-
         });
 
         Label ratingLabel = new Label("Your Rating (1-5)");
-        ratingLabel.setFont( Font.font("Times New Roman", FontWeight.NORMAL, 15) );
-        ratingLabel.setStyle( "-fx-text-fill:white" );
+        ratingLabel.setFont(Font.font("Times New Roman", FontWeight.NORMAL, 15));
+        ratingLabel.setStyle("-fx-text-fill:white");
 
         Label commentLabel = new Label("Your Comment (Optional)");
-        commentLabel.setFont( Font.font("Times New Roman", FontWeight.NORMAL, 15) );
-        commentLabel.setStyle( "-fx-text-fill:white" );
+        commentLabel.setFont(Font.font("Times New Roman", FontWeight.NORMAL, 15));
+        commentLabel.setStyle("-fx-text-fill:white");
 
-        reviewControls.getChildren().addAll( ratingLabel, inputRate, commentLabel, inputComment, addButton, errorLabel);
+        reviewControls.getChildren().addAll(ratingLabel, inputRate, commentLabel, inputComment, addButton, errorLabel);
+    }
+
+    private boolean isValidRating(String rating) {
+        return rating.matches("[1-5]");
     }
 
     private void addReview(String rating, String comment) {

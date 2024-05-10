@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import static java.lang.Math.round;
 
 public class Course {
+    private int courseID;
     /**
      * Course subject mnemonic: String with at most 4 characters.
      * such as "CS", "STS", "CHEM" etc.
@@ -27,15 +28,18 @@ public class Course {
     private double avgRating;
 
 
-    public Course( String mnemonic, int courseNumber, String courseTitle , double avgRating) {
+    public Course( int couseID, String mnemonic, int courseNumber, String courseTitle , double avgRating) {
         if ( mnemonic == null || String.valueOf( courseNumber ).length() != 4 || courseTitle == null ) {
             throw new IllegalArgumentException("Invalid Course arguments.");
         }
+        this.courseID = couseID;
         this.mnemonic = mnemonic;
         this.courseNumber = courseNumber;
         this.courseTitle = courseTitle;
         this.avgRating = avgRating;
     }
+
+    public int getCourseID(){return courseID;}
 
     public String getMnemonic() {
         return mnemonic;

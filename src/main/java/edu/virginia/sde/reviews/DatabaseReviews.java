@@ -52,11 +52,12 @@ public class DatabaseReviews {
 
         String Courses =
                 "CREATE TABLE IF NOT EXISTS Courses (" +
+                        "CourseID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "CourseMnemonic TEXT NOT NULL, " +
                         "CourseNumber INTEGER NOT NULL, " +
                         "CourseTitle TEXT NOT NULL, " +
                         "AverageReviewRating DOUBLE, " +
-                        "PRIMARY KEY (CourseMnemonic, CourseNumber, CourseTitle));";
+                        "UNIQUE(CourseMnemonic, CourseNumber, CourseTitle));";
 
         String Reviews =
                 "CREATE TABLE IF NOT EXISTS Reviews (" +
@@ -73,12 +74,12 @@ public class DatabaseReviews {
 
         String MyReviews =
                 "CREATE TABLE IF NOT EXISTS MyReviews (" +
+                        "MyReviewID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "Username TEXT NOT NULL, " +
                         "CourseMnemonic TEXT NOT NULL, " +
                         "CourseNumber INTEGER NOT NULL, " +
                         "CourseTitle TEXT NOT NULL, " +
                         "Rating INTEGER NOT NULL CHECK (Rating BETWEEN 1 AND 5), " +
-                        "PRIMARY KEY (Username, CourseMnemonic, CourseNumber, CourseTitle), " +
                         "FOREIGN KEY (Username) REFERENCES Users(Username) ON DELETE CASCADE, " +
                         "FOREIGN KEY (CourseMnemonic, CourseNumber, CourseTitle) REFERENCES Courses(CourseMnemonic, CourseNumber, CourseTitle) ON DELETE CASCADE);";
 
@@ -162,11 +163,12 @@ public class DatabaseReviews {
              ResultSet rs = statement.executeQuery(sql)) {
 
             while (rs.next()) {
+                int id = rs.getInt("CourseID");
                 String mnemonic = rs.getString("CourseMnemonic");
                 int number = rs.getInt("CourseNumber");
                 String title = rs.getString("CourseTitle");
                 double avgPoint = rs.getDouble("AverageReviewRating");
-                collection.add(new Course(mnemonic, number, title, avgPoint));
+                collection.add(new Course(id, mnemonic, number, title, avgPoint));
             }
 
         } catch (SQLException e) {
@@ -204,7 +206,7 @@ public class DatabaseReviews {
             throw new IllegalStateException("Connection is closed right now.");
         }
 
-        String sql = "SELECT Username, CourseMnemonic, CourseNumber, CourseTitle, Rating FROM MyReviews WHERE Username = ?";
+        String sql = "SELECT MyReviewID, Username, CourseMnemonic, CourseNumber, CourseTitle, Rating FROM MyReviews WHERE Username = ?";
         List<MyReview> reviews = new ArrayList<>();
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -213,6 +215,7 @@ public class DatabaseReviews {
 
             while (rs.next()) {
                 MyReview myreview = new MyReview(
+                        rs.getInt("MyReviewID"),
                         rs.getString("Username"),
                         rs.getString("CourseMnemonic"),
                         rs.getInt("CourseNumber"),
@@ -307,7 +310,6 @@ public class DatabaseReviews {
         return reviews;
     }
 
-
     public void updateReview(int reviewID, int newRating, Timestamp timestamp, String newComment) throws SQLException {
         if (connection.isClosed()) {
             throw new IllegalStateException("Connection is closed right now.");
@@ -389,7 +391,6 @@ public class DatabaseReviews {
         }
     }
 
-
     public String getAvgScore(String courseTitle) throws SQLException {
         if (connection.isClosed()) {
             throw new IllegalStateException("Connection is closed right now.");
@@ -414,7 +415,10 @@ public class DatabaseReviews {
             connection.createStatement().execute("DELETE FROM Reviews;");
             connection.createStatement().execute("DELETE FROM Courses;");
             connection.createStatement().execute("DELETE FROM Users;");
+            connection.createStatement().execute("DELETE FROM sqlite_sequence WHERE name = 'Courses';");
             connection.createStatement().execute("DELETE FROM sqlite_sequence WHERE name = 'Reviews';");
+            connection.createStatement().execute("DELETE FROM sqlite_sequence WHERE name = 'MyReviews';");
+            commit();
 
         } catch (SQLException e) {
             connection.rollback();
@@ -427,9 +431,9 @@ public class DatabaseReviews {
 //            DatabaseReviews driver = new DatabaseReviews("reviews.sqlite");
 //            driver.connect();
 //
-//            if(driver != null){
-//                driver.clearTables();
-//            }
+////            if(driver != null){
+////                driver.clearTables();
+////            }
 //
 //            driver.createTables();
 //
@@ -447,12 +451,14 @@ public class DatabaseReviews {
 //            driver.addCourse("CS", 4501, "Introduction to Algorithmic Economics", 0.00);
 //            driver.addCourse("CS", 4501, "Cybersecurity and Elections", 0.00);
 //
-//            driver.commit();
-//
+////
 ////            List<User> temp = driver.getAllUsers();
 ////            System.out.println(temp);
 //
 ////            List<Course> temp = driver.getAllCourses();
+////            for(Course c: temp){
+////                System.out.println(c.getCourseID());
+////            }
 ////            System.out.println(temp);
 //
 ////            List<MyReview> temp = driver.getMyReviews("test1");
