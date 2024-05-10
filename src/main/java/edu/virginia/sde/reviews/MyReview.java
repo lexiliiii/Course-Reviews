@@ -1,13 +1,15 @@
 package edu.virginia.sde.reviews;
 
 public class MyReview {
+    private int myReviewID;
     private String username;
     private String courseMnemonic;
     private int courseNumber;
     private String courseTitle;
     private int rating;
 
-    public MyReview(String username, String courseMnemonic, int courseNumber, String courseTitle, int rating) {
+    public MyReview(int myReviewID, String username, String courseMnemonic, int courseNumber, String courseTitle, int rating) {
+        this.myReviewID = myReviewID;
         this.username = username;
         this.courseMnemonic = courseMnemonic;
         this.courseNumber = courseNumber;
@@ -15,7 +17,8 @@ public class MyReview {
         this.rating = rating;
     }
 
-    // Getter and setter for username
+    public int getMyReviewID(){ return myReviewID; }
+
     public String getUsername() {
         return username;
     }
